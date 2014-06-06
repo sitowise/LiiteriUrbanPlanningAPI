@@ -11,7 +11,7 @@ namespace LiiteriUrbanPlanningCore.Queries
         string GetQueryString();
     }
 
-    public class SqlQuery : ISqlQuery
+    public abstract class SqlQuery : ISqlQuery
     {
         public Dictionary<string, object> Parameters {get; set;}
 
@@ -35,9 +35,6 @@ namespace LiiteriUrbanPlanningCore.Queries
             return this.Parameters[key];
         }
 
-        public virtual string GetQueryString()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string GetQueryString();
     }
 }

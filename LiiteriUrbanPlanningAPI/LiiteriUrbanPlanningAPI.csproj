@@ -84,6 +84,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Binders\DateRangeModelBinder.cs" />
     <Compile Include="Controllers\PlansController.cs" />
+    <Compile Include="Controllers\RegionsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

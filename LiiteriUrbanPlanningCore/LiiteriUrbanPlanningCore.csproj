@@ -43,16 +43,21 @@
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\PlanBriefFactory.cs" />
     <Compile Include="Factories\PlanFactory.cs" />
+    <Compile Include="Factories\RegionFactory.cs" />
     <Compile Include="Models\IEntity.cs" />
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\PlanBrief.cs" />
+    <Compile Include="Models\Region.cs" />
+    <Compile Include="Models\RegionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\PlanQuery.cs" />
+    <Compile Include="Queries\RegionQuery.cs" />
     <Compile Include="Queries\SqlQuery.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\PlanBriefRepository.cs" />
     <Compile Include="Repositories\PlanRepository.cs" />
+    <Compile Include="Repositories\RegionRepository.cs" />
     <Compile Include="Repositories\SqlRepository.cs" />
     <Compile Include="Util\Range.cs" />
   </ItemGroup>
