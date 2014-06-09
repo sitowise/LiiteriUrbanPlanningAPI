@@ -126,6 +126,96 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
         }
 
+        // Ely
+        public int? ElyIs
+        {
+            get
+            {
+                return (int) this.GetParameter("@ElyIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.whereList.Add("K.Ely_Id = @ElyIs");
+                this.AddParameter("@ElyIs", (int) value);
+            }
+        }
+
+        // Seutukunta
+        public int? SubRegionIs
+        {
+            get
+            {
+                return (int) this.GetParameter("@SubRegionIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.whereList.Add("K.Seutukunta_Id = @SubRegionIs");
+                this.AddParameter("@SubRegionIs", (int) value);
+            }
+        }
+
+        // Maakunta
+        public int? CountyIs
+        {
+            get
+            {
+                return (int) this.GetParameter("@CountyIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.whereList.Add("K.Maakunta_Id = @CountyIs");
+                this.AddParameter("@CountyIs", (int) value);
+            }
+        }
+
+        // Suuralue
+        public int? GreaterAreaIs
+        {
+            get
+            {
+                return (int) this.GetParameter("@GreaterAreaIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.whereList.Add("K.Suuralue_Id = @GreaterAreaIs");
+                this.AddParameter("@GreaterAreaIs", (int) value);
+            }
+        }
+
+        // Hallinto-oikeus
+        public int? AdministrativeCourtIs
+        {
+            get
+            {
+                return (int) this.GetParameter("@AdministrativeCourtIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.whereList.Add("K.HallintoOikeus_Id = @AdministrativeCourtIs");
+                this.AddParameter("@AdministrativeCourtIs", (int) value);
+            }
+        }
+
+        // Kunta
+        public int? MunicipalityIs
+        {
+            get
+            {
+                return (int) this.GetParameter("@MunicipalityIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.whereList.Add("K.Kunta_Id = @MunicipalityIs");
+                this.AddParameter("@MunicipalityIs", (int) value);
+            }
+        }
+
         public override string GetQueryString()
         {
             StringBuilder sb = new StringBuilder();

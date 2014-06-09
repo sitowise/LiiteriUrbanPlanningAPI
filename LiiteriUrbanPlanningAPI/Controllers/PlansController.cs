@@ -26,7 +26,13 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             DateRange approvalDateWithin = null,
             DateRange proposalDateWithin = null,
             DateRange initialDateWithin = null,
-            DateRange fillDateWithin = null)
+            DateRange fillDateWithin = null,
+            int? ely = null,
+            int? subRegion = null,
+            int? county = null,
+            int? greaterArea = null,
+            int? administrativeCourt = null,
+            int? municipality = null)
         {
             PlanQuery query = new PlanQuery();
 
@@ -38,6 +44,13 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             query.ProposalDateWithin = proposalDateWithin;
             query.InitialDateWithin = initialDateWithin;
             query.FillDateWithin = fillDateWithin;
+
+            query.ElyIs = ely;
+            query.SubRegionIs = subRegion;
+            query.CountyIs = county;
+            query.GreaterAreaIs = greaterArea;
+            query.AdministrativeCourtIs = administrativeCourt;
+            query.MunicipalityIs = municipality;
 
             string connStr =
                 ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
