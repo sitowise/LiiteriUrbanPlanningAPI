@@ -20,19 +20,19 @@ namespace LiiteriUrbanPlanningCore.Repositories
 
         public override IEnumerable<Models.Region> FindAll(Queries.ISqlQuery query)
         {
-            return this.FindBy(query,
+            return this.FindAll(query,
                 new Factories.RegionFactory());
         }
 
         public override Models.Region Single(Queries.ISqlQuery query)
         {
-            return this.FindBy(query,
+            return this.FindAll(query,
                 new Factories.RegionFactory()).Single();
         }
 
         public override Models.Region First(Queries.ISqlQuery query)
         {
-            return this.FindBy(query,
+            return this.FindAll(query,
                 new Factories.RegionFactory()).First();
         }
     }

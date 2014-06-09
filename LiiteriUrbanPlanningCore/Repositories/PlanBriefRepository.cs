@@ -15,26 +15,26 @@ namespace LiiteriUrbanPlanningCore.Repositories
 
         public override IEnumerable<Models.PlanBrief> GetAll()
         {
-            return this.FindBy(
+            return this.FindAll(
                 new Queries.PlanQuery(),
                 new Factories.PlanBriefFactory());
         }
 
         public override IEnumerable<Models.PlanBrief> FindAll(Queries.ISqlQuery query)
         {
-            return this.FindBy(query,
+            return this.FindAll(query,
                 new Factories.PlanBriefFactory());
         }
 
         public override Models.PlanBrief Single(Queries.ISqlQuery query)
         {
-            return this.FindBy(query,
+            return this.FindAll(query,
                 new Factories.PlanBriefFactory()).Single();
         }
 
         public override Models.PlanBrief First(Queries.ISqlQuery query)
         {
-            return this.FindBy(query,
+            return this.FindAll(query,
                 new Factories.PlanBriefFactory()).First();
         }
     }

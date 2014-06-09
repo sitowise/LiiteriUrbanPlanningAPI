@@ -16,7 +16,7 @@ namespace LiiteriUrbanPlanningCore.Repositories
             this.dbConnection = dbConnection;
         }
 
-        public IEnumerable<TEntity> FindBy(
+        public IEnumerable<TEntity> FindAll(
             Queries.ISqlQuery query,
             Factories.IFactory factory)
         {
