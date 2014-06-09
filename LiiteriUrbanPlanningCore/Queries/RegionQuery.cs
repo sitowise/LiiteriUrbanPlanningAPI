@@ -15,6 +15,8 @@ namespace LiiteriUrbanPlanningCore.Queries
         private List<string> whereList;
         private string regionType;
 
+        #region expressions
+
         // Ely
         public int? ElyIs
         {
@@ -89,6 +91,8 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.AddParameter("@AdministrativeCourtIs", (int) value);
             }
         }
+
+        #endregion
 
         public RegionQuery(string regionType)
         {

@@ -18,6 +18,8 @@ namespace LiiteriUrbanPlanningCore.Queries
             this.whereList = new List<string>();
         }
 
+        #region expressions
+
         public string NameIs
         {
             get {
@@ -215,6 +217,8 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.AddParameter("@MunicipalityIs", (int) value);
             }
         }
+
+        #endregion
 
         public override string GetQueryString()
         {
