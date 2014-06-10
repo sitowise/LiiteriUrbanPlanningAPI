@@ -23,6 +23,10 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [HttpGet]
         public IEnumerable<PlanBrief> GetPlans(
             string planName = null,
+            string generatedPlanId = null,
+            string municipalityPlanId = null,
+            string approver = null,
+            string planType = null,
             DateRange approvalDateWithin = null,
             DateRange proposalDateWithin = null,
             DateRange initialDateWithin = null,
@@ -38,6 +42,22 @@ namespace LiiteriUrbanPlanningAPI.Controllers
 
             if (planName != null) {
                 query.NameLike = "%" + planName + "%";
+            }
+
+            query.GeneratedPlanIdIs = generatedPlanId;
+            query.MunicipalityPlanIdIs = municipalityPlanId;
+            query.ApproverIs = approver;
+
+            if (planType != null) {
+                query.PlanTypeIn = planType.Split(',').ToList().ConvertAll(
+                    x => (new Dictionary<string, int>(){
+                        {"T", (int) PlanQuery.PlanTypes.Normal},
+                        {"R", (int) PlanQuery.PlanTypes.BeachPlan},
+                        {"M", (int) PlanQuery.PlanTypes.WithUndergroundAreas},
+                        {"tavallinen", (int) PlanQuery.PlanTypes.Normal},
+                        {"rantaasemakaava", (int) PlanQuery.PlanTypes.BeachPlan},
+                        {"maanalaistasisaltava", (int) PlanQuery.PlanTypes.WithUndergroundAreas},
+                    })[x]).ToArray();
             }
 
             query.ApprovalDateWithin = approvalDateWithin;

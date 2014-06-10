@@ -5,12 +5,21 @@ using System.Linq;
 using System.Web;
 using System.Configuration;
 
+using System.Diagnostics;
+
 using LiiteriUrbanPlanningCore.Util;
 
 namespace LiiteriUrbanPlanningCore.Queries
 {
     public class PlanQuery : SqlQuery, ISqlQuery
     {
+        public enum PlanTypes : int
+        {
+            Normal = 1,
+            WithUndergroundAreas = 2,
+            BeachPlan = 3,
+        };
+
         private List<string> whereList;
 
         public PlanQuery()
@@ -53,6 +62,70 @@ namespace LiiteriUrbanPlanningCore.Queries
             set {
                 this.whereList.Add("A.Asemakaava_Id = @IdIs");
                 this.AddParameter("@IdIs", value);
+            }
+        }
+
+        public string GeneratedPlanIdIs
+        {
+            get {
+                return (string) this.GetParameter("@GeneratedPlanIdIs");
+            }
+            set {
+                if (value == null) return;
+                this.whereList.Add("A.GenKaavaTunnus = @GeneratedPlanIdIs");
+                this.AddParameter("@GeneratedPlanIdIs", value);
+            }
+        }
+
+        public string MunicipalityPlanIdIs
+        {
+            get {
+                return (string) this.GetParameter("@MunicipalityPlanIdIs");
+            }
+            set {
+                if (value == null) return;
+                this.whereList.Add("A.KuntaKaavaTunnus = @MunicipalityPlanIdIs");
+                this.AddParameter("@MunicipalityPlanIdIs", value);
+            }
+        }
+
+        public string ApproverIs
+        {
+            get {
+                return (string) this.GetParameter("@ApproverIs");
+            }
+            set {
+                if (value == null) return;
+                this.whereList.Add(
+                    "(H.Hyvaksyja = @ApproverIs OR H.Selite = @ApproverIs)");
+                this.AddParameter("@ApproverIs", value);
+            }
+        }
+
+        private int[] _PlanTypeIn;
+        public int[] PlanTypeIn
+        {
+            get {
+                return this._PlanTypeIn;
+            }
+            set {
+                if (value == null) return;
+                this._PlanTypeIn = value;
+                var expL = new List<string>();
+                if (this._PlanTypeIn.Contains(
+                        (int) PlanTypes.Normal)) { // tavallinen
+                    expL.Add("(R.Asemakaava_Id IS NULL AND M.Asemakaava_Id IS NULL)");
+                }
+                if (this._PlanTypeIn.Contains(
+                        (int) PlanTypes.WithUndergroundAreas)) { // Maanalaista tilaa sis.
+                    expL.Add("(M.Asemakaava_Id IS NOT NULL)");
+                }
+                if (this._PlanTypeIn.Contains(
+                        (int) PlanTypes.BeachPlan)) { // Ranta-asemakaava
+                    expL.Add("(R.Asemakaava_Id IS NOT NULL)");
+                }
+                this.whereList.Add(string.Format(
+                    "({0})", string.Join(" OR ", expL)));
             }
         }
 
@@ -237,20 +310,37 @@ namespace LiiteriUrbanPlanningCore.Queries
             sb.Append("A.TayttamisPvm ");
 
             sb.Append(string.Format(
-                "FROM [{0}].[dbo].[Asemakaava] A ",
+                "FROM [{0}]..[Asemakaava] A ",
                 ConfigurationManager.AppSettings["DbKatse"]));
 
             sb.Append(string.Format(
-                "INNER JOIN [{0}].[dbo].[Kunta] K ",
+                "INNER JOIN [{0}]..[Kunta] K ",
                 ConfigurationManager.AppSettings["DbHakemisto"]));
             //sb.Append("ON K.Nro = A.H_Kunta_Id ")
             sb.Append("ON K.Kunta_Id = A.H_Kunta_Id ");
+
+            sb.Append(string.Format(
+                "LEFT OUTER JOIN [{0}]..[Hyvaksyja] H ",
+                ConfigurationManager.AppSettings["DbKatse"]));
+            sb.Append("ON H.Hyvaksyja_Id = A.Hyvaksyja_Id ");
+
+            sb.Append(string.Format(
+                "LEFT OUTER JOIN [{0}]..[RantaAsemakaava] R ON ",
+                ConfigurationManager.AppSettings["DbKatse"]));
+            sb.Append("R.Asemakaava_Id = A.Asemakaava_Id ");
+
+            sb.Append("OUTER APPLY (SELECT TOP 1 * ");
+            sb.Append(string.Format(
+                "FROM [{0}]..[MaanalaisetTilat] M ",
+                ConfigurationManager.AppSettings["DbKatse"]));
+            sb.Append("WHERE M.Asemakaava_Id = A.Asemakaava_Id) M ");
 
             if (this.whereList.Count > 0) {
                 sb.Append("WHERE ");
                 sb.Append(string.Join(" AND ", whereList));
             }
 
+            Debug.WriteLine(sb.ToString());
             return sb.ToString();
         }
     }
