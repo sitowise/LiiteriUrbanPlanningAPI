@@ -298,16 +298,30 @@ namespace LiiteriUrbanPlanningCore.Queries
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT ");
 
-            sb.Append("A.Nimi, ");
-            sb.Append("A.Asemakaava_ID, ");
-            sb.Append("A.H_Kunta_Id, ");
-            sb.Append("A.KuntaKaavaTunnus, ");
-            sb.Append("A.GenKaavaTunnus, ");
+            sb.Append("A.Nimi AS Name, ");
+            sb.Append("A.Asemakaava_ID AS Id, ");
+            sb.Append("A.H_Kunta_Id AS MunicipalityId, ");
+            sb.Append("A.KuntaKaavaTunnus AS MunicipalityPlanId, ");
+            sb.Append("A.GenKaavaTunnus AS GeneratedPlanId, ");
 
-            sb.Append("A.HyvPvm, ");
-            sb.Append("A.EhdotusPvm, ");
-            sb.Append("A.VireillePvm, ");
-            sb.Append("A.TayttamisPvm ");
+            sb.Append("A.HyvPvm AS ApprovalDate, ");
+            sb.Append("A.EhdotusPvm AS ProposalDate, ");
+            sb.Append("A.VireillePvm AS InitialDate, ");
+            sb.Append("A.TayttamisPvm AS FillDate, ");
+
+            sb.Append("K.Nimi AS MunicipalityName, ");
+            sb.Append("H.Hyvaksyja AS DecisionMaker, ");
+
+            sb.Append("A.HyvPykala AS DecisionNumber, ");
+            sb.Append("A.Pinala AS PlanArea, ");
+            sb.Append("A.MaanalainenPinala AS UndergroundArea, ");
+            sb.Append("A.UusiPinala AS PlanAreaNew, ");
+            sb.Append("A.MuutosPinala AS PlanAreaChange, ");
+            sb.Append("R.Rantaviiva AS CoastlineLength, ");
+            sb.Append("R.RakennusPaikkaOma AS BuildingCountOwn, ");
+            sb.Append("R.RakennusPaikkaMuu AS BuildingCountOther, ");
+            sb.Append("R.RakennusPaikkaOmaLoma AS BuildingCountOwnHoliday, ");
+            sb.Append("R.RakennusPaikkaMuuLoma AS BuildingCountOtherHoliday ");
 
             sb.Append(string.Format(
                 "FROM [{0}]..[Asemakaava] A ",

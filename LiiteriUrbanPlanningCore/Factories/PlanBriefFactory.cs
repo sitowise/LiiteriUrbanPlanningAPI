@@ -13,16 +13,16 @@ namespace LiiteriUrbanPlanningCore.Factories
         {
             var p = new Models.PlanBrief();
 
-            p.Id = (int) rdr["Asemakaava_ID"];
-            p.Name = rdr["Nimi"].ToString();
-            p.MunicipalityId = (int) rdr["H_Kunta_Id"];
-            p.MunicipalityPlanId = rdr["KuntaKaavaTunnus"].ToString();
-            p.GeneratedPlanId = rdr["GenKaavaTunnus"].ToString();
+            p.Id = (int) rdr["Id"];
+            p.Name = rdr["Name"].ToString();
+            p.MunicipalityId = (int) rdr["MunicipalityId"];
+            p.MunicipalityPlanId = rdr["MunicipalityPlanId"].ToString();
+            p.GeneratedPlanId = rdr["GeneratedPlanId"].ToString();
 
-            p.ApprovalDate = this.GetDateTimeValue(rdr, "HyvPvm");
-            p.ProposalDate = this.GetDateTimeValue(rdr, "EhdotusPvm");
-            p.InitialDate = this.GetDateTimeValue(rdr, "VireillePvm");
-            p.FillDate = this.GetDateTimeValue(rdr, "TayttamisPvm");
+            p.ApprovalDate = (DateTime?) this.GetValueOrNull(rdr, "ApprovalDate");
+            p.ProposalDate = (DateTime?) this.GetValueOrNull(rdr, "ProposalDate");
+            p.InitialDate = (DateTime?) this.GetValueOrNull(rdr, "InitialDate");
+            p.FillDate = (DateTime?) this.GetValueOrNull(rdr, "FillDate");
 
             return p;
         }

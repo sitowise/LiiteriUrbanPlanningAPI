@@ -11,10 +11,10 @@ namespace LiiteriUrbanPlanningCore.Factories
     {
         public abstract Models.IEntity Create(DbDataReader rdr);
 
-        public DateTime? GetDateTimeValue(DbDataReader rdr, string key)
+        public object GetValueOrNull(DbDataReader rdr, string key)
         {
             if (Convert.IsDBNull(rdr[key])) return null;
-            return (DateTime) rdr.GetDateTime(rdr.GetOrdinal(key));
+            return rdr.GetValue(rdr.GetOrdinal(key));
         }
     }
 }
