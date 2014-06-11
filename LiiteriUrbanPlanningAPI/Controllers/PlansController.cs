@@ -100,12 +100,23 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             }
         }
 
-        [Route("plans/{id}/areaReservations/main")]
+        [Route("plans/{id}/areaReservations/{type}")]
         [HttpGet]
-        public IEnumerable<AreaReservation> GetAreaReservationsMain(int id)
+        public IEnumerable<AreaReservation> GetAreaReservations(
+            int id, string type)
         {
             AreaReservationQuery query = new AreaReservationQuery(id);
-            query.QueryType = (int) AreaReservationQuery.QueryTypes.Main;
+
+            switch (type) {
+                case "main":
+                    query.QueryType = (int) AreaReservationQuery.QueryTypes.Main;
+                    break;
+                case "sub":
+                    query.QueryType = (int) AreaReservationQuery.QueryTypes.Sub;
+                    break;
+                default:
+                    throw new ArgumentException("QueryType not specified!");
+            }
 
             string connStr =
                 ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
@@ -117,20 +128,59 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             }
         }
 
-        [Route("plans/{id}/areaReservations/sub")]
+        [Route("plans/{id}/undergroundAreas/{type}")]
         [HttpGet]
-        public IEnumerable<AreaReservation> GetAreaReservationsSub(int id)
+        public IEnumerable<UndergroundArea> GetUndergroundAreas(
+            int id, string type)
         {
-            AreaReservationQuery query = new AreaReservationQuery(id);
-            query.QueryType = (int) AreaReservationQuery.QueryTypes.Sub;
+            UndergroundAreaQuery query = new UndergroundAreaQuery(id);
+
+            switch (type) {
+                case "main":
+                    query.QueryType = (int) UndergroundAreaQuery.QueryTypes.Main;
+                    break;
+                case "sub":
+                    query.QueryType = (int) UndergroundAreaQuery.QueryTypes.Sub;
+                    break;
+                default:
+                    throw new ArgumentException("QueryType not specified!");
+            }
 
             string connStr =
                 ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
 
             using (DbConnection db = new SqlConnection(connStr)) {
                 db.Open();
-                var repository = new AreaReservationRepository(db);
-                return (List<AreaReservation>) repository.FindAll(query);
+                var repository = new UndergroundAreaRepository(db);
+                return (List<UndergroundArea>) repository.FindAll(query);
+            }
+        }
+
+        [Route("plans/{id}/buildingConservations/{type}")]
+        [HttpGet]
+        public IEnumerable<BuildingConservation> GetBuildingConservations(
+            int id, string type)
+        {
+            BuildingConservationQuery query = new BuildingConservationQuery(id);
+
+            switch (type) {
+                case "main":
+                    query.QueryType = (int) BuildingConservationQuery.QueryTypes.Main;
+                    break;
+                case "sub":
+                    query.QueryType = (int) BuildingConservationQuery.QueryTypes.Sub;
+                    break;
+                default:
+                    throw new ArgumentException("QueryType not specified!");
+            }
+
+            string connStr =
+                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
+
+            using (DbConnection db = new SqlConnection(connStr)) {
+                db.Open();
+                var repository = new BuildingConservationRepository(db);
+                return (List<BuildingConservation>) repository.FindAll(query);
             }
         }
     }
