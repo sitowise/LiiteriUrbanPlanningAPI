@@ -99,5 +99,39 @@ namespace LiiteriUrbanPlanningAPI.Controllers
                 return (Plan) repository.Single(query);
             }
         }
+
+        [Route("plans/{id}/areaReservations/main")]
+        [HttpGet]
+        public IEnumerable<AreaReservation> GetAreaReservationsMain(int id)
+        {
+            AreaReservationQuery query = new AreaReservationQuery(id);
+            query.QueryType = (int) AreaReservationQuery.QueryTypes.Main;
+
+            string connStr =
+                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
+
+            using (DbConnection db = new SqlConnection(connStr)) {
+                db.Open();
+                var repository = new AreaReservationRepository(db);
+                return (List<AreaReservation>) repository.FindAll(query);
+            }
+        }
+
+        [Route("plans/{id}/areaReservations/sub")]
+        [HttpGet]
+        public IEnumerable<AreaReservation> GetAreaReservationsSub(int id)
+        {
+            AreaReservationQuery query = new AreaReservationQuery(id);
+            query.QueryType = (int) AreaReservationQuery.QueryTypes.Sub;
+
+            string connStr =
+                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
+
+            using (DbConnection db = new SqlConnection(connStr)) {
+                db.Open();
+                var repository = new AreaReservationRepository(db);
+                return (List<AreaReservation>) repository.FindAll(query);
+            }
+        }
     }
 }
