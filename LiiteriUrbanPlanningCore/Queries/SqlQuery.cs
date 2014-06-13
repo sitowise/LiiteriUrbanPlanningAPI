@@ -32,6 +32,9 @@ namespace LiiteriUrbanPlanningCore.Queries
 
         public object GetParameter(string key)
         {
+            if (!this.Parameters.ContainsKey(key)) {
+                return null;
+            }
             return this.Parameters[key];
         }
 
