@@ -11,7 +11,7 @@ namespace LiiteriUrbanPlanningCore.Models
         public string MunicipalityName { get; set; }
         public string DecisionMaker { get; set; }
         public string DecisionNumber { get; set; }
-        public decimal PlanArea { get; set; }
+        public decimal? PlanArea { get; set; }
         public decimal? UndergroundArea { get; set; }
         public decimal? PlanAreaNew { get; set; }
         public decimal? PlanAreaChange { get; set; }

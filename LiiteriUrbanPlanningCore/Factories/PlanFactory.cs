@@ -27,7 +27,7 @@ namespace LiiteriUrbanPlanningCore.Factories
             p.MunicipalityName = rdr["MunicipalityName"].ToString();
             p.DecisionMaker = rdr["DecisionMaker"].ToString();
             p.DecisionNumber = rdr["DecisionNumber"].ToString();
-            p.PlanArea = (decimal) rdr["PlanArea"];
+            p.PlanArea = (decimal?) this.GetValueOrNull(rdr, "PlanArea");
             p.UndergroundArea = (decimal?) this.GetValueOrNull(rdr, "UndergroundArea");
             p.PlanAreaNew = (decimal?) this.GetValueOrNull(rdr, "PlanAreaNew");
             p.PlanAreaChange = (decimal?) this.GetValueOrNull(rdr, "PlanAreaChange");
