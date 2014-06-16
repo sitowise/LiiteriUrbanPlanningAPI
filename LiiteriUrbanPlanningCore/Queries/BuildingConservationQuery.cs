@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 
+using System.Diagnostics;
+
 namespace LiiteriUrbanPlanningCore.Queries
 {
     public class BuildingConservationQuery : SqlQuery, ISqlQuery
@@ -15,14 +17,54 @@ namespace LiiteriUrbanPlanningCore.Queries
             Sub = 2,
         }
 
-        private int PlanId;
+        private List<string> whereList;
 
         public int QueryType { get; set; }
 
-        public BuildingConservationQuery(int planId)
+        public int? PlanIdIs
         {
-            this.PlanId = planId;
-            this.AddParameter("@PlanId", planId);
+            get
+            {
+                return (int?) this.GetParameter("@PlanIdIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.AddParameter("@PlanIdIs", value);
+                this.whereList.Add("A.Asemakaava_Id = @PlanIdIs");
+            }
+        }
+
+        private int[] _PlanIdIn;
+        public int[] PlanIdIn
+        {
+            get
+            {
+                return this._PlanIdIn;
+            }
+            set
+            {
+                if (value == null) return;
+                if (this._PlanIdIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._PlanIdIn = value;
+                string[] paramNames = value.Select(
+                        (s, i) => "@PlanIdIn_" + i.ToString()
+                    ).ToArray();
+                for (int i = 0; i < paramNames.Length; i++) {
+                    this.AddParameter(paramNames[i], value[i]);
+                }
+                this.whereList.Add(string.Format(
+                    "A.Asemakaava_Id IN ({0})",
+                    string.Join(",", paramNames)));
+            }
+        }
+
+        public BuildingConservationQuery(int? planId = null)
+        {
+            this.whereList = new List<string>();
+            this.PlanIdIs = planId;
         }
 
         public override string GetQueryString()
@@ -41,8 +83,7 @@ FROM
 		RS.Asemakaava_Id = A.Asemakaava_Id
 	INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
 		RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
-WHERE
-	A.Asemakaava_Id = @PlanId
+{1}
 GROUP BY
 	RST.RakennusSuojTyyppi_Id,
 	RST.RakennusSuojTyyppi
@@ -76,8 +117,7 @@ FROM
 	[{0}]..[RakennusSuoj] RS
 	LEFT OUTER JOIN [{0}]..[Asemakaava] A ON
 		A.Asemakaava_Id = RS.Asemakaava_Id
-WHERE
-	A.Asemakaava_Id = @PlanId
+{1}
 GROUP BY
 	RS.RakennusSuojTyyppi_Id) AS RSSUM ON
 		RST.RakennusSuojTyyppi_Id = RSSUM.RakennusSuojTyyppi_Id
@@ -95,8 +135,16 @@ ORDER BY
                 default:
                     throw new ArgumentException("QueryType not specified!");
             }
+
+            string whereExpr = "";
+            if (this.whereList.Count > 0) {
+                whereExpr = " WHERE " + string.Join(" AND ", whereList);
+            }
+
             queryString = string.Format(queryString,
-                ConfigurationManager.AppSettings["DbKatse"]);
+                ConfigurationManager.AppSettings["DbKatse"],
+                whereExpr);
+            Debug.WriteLine(queryString);
             return queryString;
         }
     }

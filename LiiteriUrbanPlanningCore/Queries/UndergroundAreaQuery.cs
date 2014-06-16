@@ -15,13 +15,55 @@ namespace LiiteriUrbanPlanningCore.Queries
             Sub = 2,
         }
 
-        private int PlanId;
+        private List<string> whereList;
+
         public int QueryType { get; set; }
 
-        public UndergroundAreaQuery(int planId)
+        public int? PlanIdIs
         {
-            this.PlanId = planId;
-            this.AddParameter("@PlanId", planId);
+            get
+            {
+                return (int?) this.GetParameter("@PlanIdIs");
+            }
+            set
+            {
+                if (value == null) return;
+                this.AddParameter("@PlanIdIs", value);
+                this.whereList.Add("A.Asemakaava_Id = @PlanIdIs");
+            }
+        }
+
+        private int[] _PlanIdIn;
+        public int[] PlanIdIn
+        {
+            get
+            {
+                return this._PlanIdIn;
+            }
+            set
+            {
+                if (value == null) return;
+                if (this._PlanIdIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._PlanIdIn = value;
+                string[] paramNames = value.Select(
+                        (s, i) => "@PlanIdIn_" + i.ToString()
+                    ).ToArray();
+                for (int i = 0; i < paramNames.Length; i++) {
+                    this.AddParameter(paramNames[i], value[i]);
+                }
+                this.whereList.Add(string.Format(
+                    "A.Asemakaava_Id IN ({0})",
+                    string.Join(",", paramNames)));
+            }
+        }
+
+
+        public UndergroundAreaQuery(int? planId = null)
+        {
+            this.whereList = new List<string>();
+            this.PlanIdIs = planId;
         }
 
         public override string GetQueryString()
@@ -38,9 +80,7 @@ FROM
 	[LiiteriKatse]..[Asemakaava] A
 	INNER JOIN [LiiteriKatse]..[MaanalaisetTilat] MT ON
 		MT.Asemakaava_Id = A.Asemakaava_Id  
-WHERE
-	A.Asemakaava_Id = @PlanId
-";
+{1}";
 
             string queryStringSub = @"
 SELECT
@@ -57,9 +97,7 @@ FROM
 		MT.Asemakaava_Id = A.Asemakaava_Id  
 	LEFT OUTER JOIN [LiiteriKatse]..[VW_MaanalaisetKaavamerkit] VMKM ON
 		VMKM.Kaavamerkinta = MT.Kaavamerkinta
-WHERE
-	A.Asemakaava_Id = @PlanId AND
-	MT.Kaavamerkinta is not NULL
+{1}
 GROUP BY
 	MT.Kaavamerkinta,
 	VMKM.JarjNro,
@@ -76,12 +114,20 @@ ORDER BY
                     break;
                 case (int) QueryTypes.Sub:
                     queryString = queryStringSub;
+                    this.whereList.Add("MT.Kaavamerkinta IS NOT NULL");
                     break;
                 default:
                     throw new ArgumentException("QueryType not specified!");
             }
+
+            string whereExpr = "";
+            if (this.whereList.Count > 0) {
+                whereExpr = " WHERE " + string.Join(" AND ", whereList);
+            }
+
             queryString = string.Format(queryString,
-                ConfigurationManager.AppSettings["DbKatse"]);
+                ConfigurationManager.AppSettings["DbKatse"],
+                whereExpr);
             return queryString;
         }
     }
