@@ -14,7 +14,7 @@ namespace LiiteriUrbanPlanningCore.Factories
             var bc = new Models.BuildingConservation();
 
             bc.ConservationTypeId = (int?) this.GetValueOrNull(rdr, "ConservationTypeId");
-            bc.ConservationTypeName = (string) this.GetValueOrNull(rdr, "ConservationTypeName").ToString();
+            bc.ConservationTypeName = (string) this.GetValueOrNull(rdr, "ConservationTypeName");
             bc.BuildingCount = (int?) this.GetValueOrNull(rdr, "BuildingCount");
             bc.FloorSpace = (int?) this.GetValueOrNull(rdr, "FloorSpace");
             bc.ChangeCount = (int?) this.GetValueOrNull(rdr, "ChangeCount");
