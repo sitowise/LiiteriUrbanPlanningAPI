@@ -19,6 +19,7 @@ namespace LiiteriUrbanPlanningCore.Factories
             summary.UndergroundArea = (decimal?) this.GetValueOrNull(rdr, "UndergroundArea");
             summary.PlanAreaChange = (decimal?) this.GetValueOrNull(rdr, "PlanAreaChange");
             summary.DurationAverage = (decimal?) this.GetValueOrNull(rdr, "DurationAverage");
+            summary.DurationMedian = (decimal?) this.GetValueOrNull(rdr, "DurationMedian");
             summary.CoastlineLength = (decimal?) this.GetValueOrNull(rdr, "CoastlineLength");
             summary.BuildingCountOwn = (int?) this.GetValueOrNull(rdr, "BuildingCountOwn");
             summary.BuildingCountOther = (int?) this.GetValueOrNull(rdr, "BuildingCountOther");

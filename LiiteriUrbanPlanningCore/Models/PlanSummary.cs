@@ -14,6 +14,7 @@ namespace LiiteriUrbanPlanningCore.Models
         public decimal? UndergroundArea { get; set; }
         public decimal? PlanAreaChange { get; set; }
         public decimal? DurationAverage { get; set; }
+        public decimal? DurationMedian { get; set; }
         public decimal? CoastlineLength { get; set; }
         public int? BuildingCountOwn { get; set; }
         public int? BuildingCountOther { get; set; }
