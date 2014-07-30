@@ -20,5 +20,6 @@ namespace LiiteriUrbanPlanningCore.Models
         public int? BuildingCountOther { get; set; }
         public int? BuildingCountOwnHoliday { get; set; }
         public int? BuildingCountOtherHoliday { get; set; }
+        public decimal? Duration { get; set; }
     }
 }

@@ -321,7 +321,9 @@ namespace LiiteriUrbanPlanningCore.Queries
             sb.Append("R.RakennusPaikkaOma AS BuildingCountOwn, ");
             sb.Append("R.RakennusPaikkaMuu AS BuildingCountOther, ");
             sb.Append("R.RakennusPaikkaOmaLoma AS BuildingCountOwnHoliday, ");
-            sb.Append("R.RakennusPaikkaMuuLoma AS BuildingCountOtherHoliday ");
+            sb.Append("R.RakennusPaikkaMuuLoma AS BuildingCountOtherHoliday, ");
+
+            sb.Append("CAST(DATEDIFF(day, A.VireillePvm, A.HyvPvm)/30.0 AS DECIMAL(10,1)) AS Duration ");
 
             sb.Append(string.Format(
                 "FROM [{0}]..[Asemakaava] A ",

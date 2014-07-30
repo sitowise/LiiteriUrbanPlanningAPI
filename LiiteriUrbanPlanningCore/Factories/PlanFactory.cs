@@ -23,6 +23,7 @@ namespace LiiteriUrbanPlanningCore.Factories
             p.ProposalDate = (DateTime?) this.GetValueOrNull(rdr, "ProposalDate");
             p.InitialDate = (DateTime?) this.GetValueOrNull(rdr, "InitialDate");
             p.FillDate = (DateTime?) this.GetValueOrNull(rdr, "FillDate");
+            p.Duration = (decimal?) this.GetValueOrNull(rdr, "Duration");
 
             p.MunicipalityName = rdr["MunicipalityName"].ToString();
             p.DecisionMaker = rdr["DecisionMaker"].ToString();
