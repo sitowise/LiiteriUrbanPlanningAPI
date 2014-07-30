@@ -81,7 +81,7 @@ FROM
 	[{0}]..[Asemakaava] A
 	LEFT OUTER JOIN [{0}]..[RakennusSuoj] RS ON
 		RS.Asemakaava_Id = A.Asemakaava_Id
-	LEFT OUTER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
+	INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
 		RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
 {1}
 GROUP BY
