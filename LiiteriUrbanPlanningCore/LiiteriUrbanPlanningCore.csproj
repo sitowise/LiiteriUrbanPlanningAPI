@@ -44,6 +44,7 @@
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\BuildingConservationFactory.cs" />
     <Compile Include="Factories\MarkingFactory.cs" />
+    <Compile Include="Factories\PersonFactory.cs" />
     <Compile Include="Factories\PlanBriefFactory.cs" />
     <Compile Include="Factories\PlanFactory.cs" />
     <Compile Include="Factories\PlanSummaryFactory.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Models\IEntity.cs" />
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Models\Marking.cs" />
+    <Compile Include="Models\Person.cs" />
     <Compile Include="Models\Plan.cs" />
     <Compile Include="Models\PlanBrief.cs" />
     <Compile Include="Models\PlanSummary.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="Queries\AreaReservationQuery.cs" />
     <Compile Include="Queries\BuildingConservationQuery.cs" />
     <Compile Include="Queries\MarkingQuery.cs" />
+    <Compile Include="Queries\PersonQuery.cs" />
     <Compile Include="Queries\PlanQuery.cs" />
     <Compile Include="Queries\PlanSummaryQuery.cs" />
     <Compile Include="Queries\RegionQuery.cs" />
@@ -73,6 +76,7 @@
     <Compile Include="Repositories\BuildingConservationRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\MarkingRepository.cs" />
+    <Compile Include="Repositories\PersonRepository.cs" />
     <Compile Include="Repositories\PlanBriefRepository.cs" />
     <Compile Include="Repositories\PlanRepository.cs" />
     <Compile Include="Repositories\PlanSummaryRepository.cs" />
