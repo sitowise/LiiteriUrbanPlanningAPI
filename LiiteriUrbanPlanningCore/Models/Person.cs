@@ -17,6 +17,7 @@ namespace LiiteriUrbanPlanningCore.Models
         public string Fax { get; set; }
         public string Email { get; set; }
         public string OrganizationName { get; set; }
+        public string Office { get; set; }
         public string PersonType { get; set; }
         public string VatNumber { get; set; }
     }

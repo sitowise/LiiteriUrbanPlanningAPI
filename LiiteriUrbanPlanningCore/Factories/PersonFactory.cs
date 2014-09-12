@@ -23,6 +23,7 @@ namespace LiiteriUrbanPlanningCore.Factories
             person.Fax = rdr["Fax"].ToString();
             person.Email = rdr["Email"].ToString();
             person.OrganizationName = rdr["OrganizationName"].ToString();
+            person.Office = rdr["Office"].ToString();
             person.VatNumber = rdr["VatNumber"].ToString();
 
             person.PersonType = rdr["PersonType"].ToString();
