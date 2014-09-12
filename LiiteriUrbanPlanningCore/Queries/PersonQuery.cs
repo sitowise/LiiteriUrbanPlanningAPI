@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LiiteriUrbanPlanningCore.Queries
 {
@@ -216,6 +217,7 @@ LEFT OUTER JOIN [LiiteriHakemisto]..[Kunta] K1 ON
 
             string queryStringConsults = @"
 SELECT
+    DISTINCT
     H2.Nimi AS OrganizationName,
     H2.Etunimi AS FirstName,
     H2.Sukunimi AS LastName,
@@ -264,6 +266,7 @@ INNER JOIN [LiiteriHakemisto]..[Kunta] K2 ON
 
             string queryString = string.Join(" UNION ALL ", queryStrings);
 
+            Debug.WriteLine(queryString);
             return queryString;
         }
     }
