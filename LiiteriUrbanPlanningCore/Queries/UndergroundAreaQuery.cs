@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace LiiteriUrbanPlanningCore.Queries
 {
@@ -70,41 +71,58 @@ namespace LiiteriUrbanPlanningCore.Queries
         {
             string queryStringMain = @"
 SELECT
-	'Yhteensä' AS Description,
-	sum(MT.Pinala) AS AreaSize,
-	sum(MT.PinalaPros) AS AreaPercent,
-	sum(MT.Kerrosala) AS FloorSpace,
-	sum(MT.PinalaMuutos) AS AreaChange,
-	sum(MT.KerrosalaMuutos) AS FloorSpaceChange
+    'Yhteensä' AS Description,
+    sum(MT.Pinala) AS AreaSize,
+    sum(MT.PinalaPros) AS AreaPercent,
+    sum(MT.Kerrosala) AS FloorSpace,
+    sum(MT.PinalaMuutos) AS AreaChange,
+    sum(MT.KerrosalaMuutos) AS FloorSpaceChange
 FROM
-	[LiiteriKatse]..[Asemakaava] A
-	INNER JOIN [LiiteriKatse]..[MaanalaisetTilat] MT ON
-		MT.Asemakaava_Id = A.Asemakaava_Id  
+    [{0}]..[Asemakaava] A
+    INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
+        MT.Asemakaava_Id = A.Asemakaava_Id  
 {1}";
 
             string queryStringSub = @"
 SELECT
-	VMKM.JarjNro AS OrderNumber,
-	MT.Kaavamerkinta AS Description,
-	sum(MT.Pinala) AS AreaSize,
-	sum(MT.PinalaPros) AS AreaPercent,
-	sum(MT.Kerrosala) AS FloorSpace,
-	sum(MT.PinalaMuutos) AS AreaChange,
-	sum(MT.KerrosalaMuutos) AS FloorSpaceChange
+    0 AS OrderNumber,
+    'Yhteensä' AS Description,
+    sum(MT.Pinala) AS AreaSize,
+    sum(MT.PinalaPros) AS AreaPercent,
+    sum(MT.Kerrosala) AS FloorSpace,
+    sum(MT.PinalaMuutos) AS AreaChange,
+    sum(MT.KerrosalaMuutos) AS FloorSpaceChange
 FROM
-	[LiiteriKatse]..[Asemakaava] A
-	INNER JOIN [LiiteriKatse]..[MaanalaisetTilat] MT ON
-		MT.Asemakaava_Id = A.Asemakaava_Id  
-	LEFT OUTER JOIN [LiiteriKatse]..[VW_MaanalaisetKaavamerkit] VMKM ON
-		VMKM.Kaavamerkinta = MT.Kaavamerkinta
+    [{0}]..[Asemakaava] A
+    INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
+        MT.Asemakaava_Id = A.Asemakaava_Id  
 {1}
+
+UNION ALL
+
+SELECT
+    VMKM.JarjNro AS OrderNumber,
+    MT.Kaavamerkinta AS Description,
+    sum(MT.Pinala) AS AreaSize,
+    sum(MT.PinalaPros) AS AreaPercent,
+    sum(MT.Kerrosala) AS FloorSpace,
+    sum(MT.PinalaMuutos) AS AreaChange,
+    sum(MT.KerrosalaMuutos) AS FloorSpaceChange
+FROM
+    [{0}]..[Asemakaava] A
+    INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
+        MT.Asemakaava_Id = A.Asemakaava_Id  
+    LEFT OUTER JOIN [{0}]..[VW_MaanalaisetKaavamerkit] VMKM ON
+        VMKM.Kaavamerkinta = MT.Kaavamerkinta
+{1}
+
 GROUP BY
-	MT.Kaavamerkinta,
-	VMKM.JarjNro,
-	VMKM.Kaavamerkinta  
+    MT.Kaavamerkinta,
+    VMKM.JarjNro,
+    VMKM.Kaavamerkinta  
 ORDER BY
-	VMKM.JarjNro,
-	VMKM.Kaavamerkinta
+    OrderNumber,
+    Description
 ";
 
             string queryString;
@@ -128,6 +146,7 @@ ORDER BY
             queryString = string.Format(queryString,
                 ConfigurationManager.AppSettings["DbKatse"],
                 whereExpr);
+            Debug.WriteLine(queryString);
             return queryString;
         }
     }

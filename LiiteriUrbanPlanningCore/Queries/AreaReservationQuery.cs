@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 
+using System.Diagnostics;
+
 namespace LiiteriUrbanPlanningCore.Queries
 {
     public class AreaReservationQuery : SqlQuery, ISqlQuery
@@ -69,47 +71,98 @@ namespace LiiteriUrbanPlanningCore.Queries
         {
             string queryStringMain = @"
 SELECT
-	S.Paaluokka_Id AS MainMarkId,
-	KPL.NaytonSelite AS Description,
-	S.area AS AreaSize,
-	S.areapros AS AreaPercent,
-	S.floorspace AS FloorSpace,
-	S.effectiveness AS Efficiency,
-	S.areachange AS AreaChange,
-	S.floorspacechange AS FloorSpaceChange
+    1 AS prio,
+    NULL AS MainMarkId,
+    'Yhteensä' AS Description,
+    ROUND(sum(AV.Pinala),4) AS AreaSize,
+    100 AS AreaPercent,
+    ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
+    (case
+        when sum(AV.Pinala)=0 then null
+        when sum(AV.Pinala) is null then null
+        when sum(AV.Pinala)<>0 then
+            ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
+    end) AS Efficiency,
+    ROUND(sum(AV.PinalaMuutos),4) AS AreaChange,
+    ROUND(sum(AV.KerrosalaMuutos),0) AS FloorSpaceChange 
 FROM
-	(SELECT
-		NaytonSelite,PaaLuokka_Id
-	FROM
-		[{0}]..[KaavaPaaLuokka]) AS KPL
-		LEFT OUTER JOIN (
-			SELECT
-				AV.PaaLuokka_Id,
-				area=ROUND(sum(AV.Pinala),4),
-				areapros=ROUND(sum(AV.PinalaPros),1),
-				floorspace=ROUND(sum(AV.Kerrosala),0),
-				effectiveness=(
-					case
-						when sum(AV.Pinala)=0 then null
-						when sum(AV.Pinala) is null then null
-						when sum(AV.Pinala)<>0 then ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
-					end),
-				areachange=ROUND(sum(AV.PinalaMuutos),4),
-				floorspacechange = ROUND(Sum(AV.KerrosalaMuutos),0) 
-			FROM
-				[{0}]..[Aluevaraus] AV
-				LEFT OUTER JOIN [{0}]..[Asemakaava] A ON
-					AV.Asemakaava_Id = A.Asemakaava_Id  
-            {1}
-			GROUP BY AV.PaaLuokka_Id
-		) AS S ON
-			KPL.PaaLuokka_Id = S.PaaLuokka_Id  
+    [{0}]..[Asemakaava] A
+    INNER JOIN [{0}]..[Aluevaraus] AV ON
+        A.Asemakaava_Id = AV.Asemakaava_Id  
+{1}
+
+UNION ALL
+
+SELECT
+    2 AS prio,
+    S.Paaluokka_Id AS MainMarkId,
+    KPL.NaytonSelite AS Description,
+    S.area AS AreaSize,
+    S.areapros AS AreaPercent,
+    S.floorspace AS FloorSpace,
+    S.effectiveness AS Efficiency,
+    S.areachange AS AreaChange,
+    S.floorspacechange AS FloorSpaceChange
+FROM
+    (SELECT
+        NaytonSelite,PaaLuokka_Id
+    FROM
+        [{0}]..[KaavaPaaLuokka]) AS KPL
+        LEFT OUTER JOIN (
+            SELECT
+                AV.PaaLuokka_Id,
+                area=ROUND(sum(AV.Pinala),4),
+                areapros=ROUND(sum(AV.PinalaPros),1),
+                floorspace=ROUND(sum(AV.Kerrosala),0),
+                effectiveness=(
+                    case
+                        when sum(AV.Pinala)=0 then null
+                        when sum(AV.Pinala) is null then null
+                        when sum(AV.Pinala)<>0 then
+                            ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
+                    end),
+                areachange=ROUND(sum(AV.PinalaMuutos),4),
+                floorspacechange = ROUND(Sum(AV.KerrosalaMuutos),0) 
+            FROM
+                [{0}]..[Aluevaraus] AV
+                LEFT OUTER JOIN [{0}]..[Asemakaava] A ON
+                    AV.Asemakaava_Id = A.Asemakaava_Id  
+                {1}
+            GROUP BY
+                AV.PaaLuokka_Id
+        ) AS S ON
+            KPL.PaaLuokka_Id = S.PaaLuokka_Id  
 ORDER BY
-	KPL.PaaLuokka_Id 
+    prio,
+    MainMarkId
 ";
 
             string queryStringSub = @"
 SELECT
+    1 AS prio,
+    NULL AS MainMarkId,
+    'Yhteensä' AS Description,
+    ROUND(sum(AV.Pinala),4) AS AreaSize,
+    100 AS AreaPercent,
+    ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
+    (case
+        when sum(AV.Pinala)=0 then null
+        when sum(AV.Pinala) is null then null
+        when sum(AV.Pinala)<>0 then
+            ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
+    end) AS Efficiency,
+    ROUND(sum(AV.PinalaMuutos),4) AS AreaChange,
+    ROUND(sum(AV.KerrosalaMuutos),0) AS FloorSpaceChange 
+FROM
+    [{0}]..[Asemakaava] A
+    INNER JOIN [{0}]..[Aluevaraus] AV ON
+        A.Asemakaava_Id = AV.Asemakaava_Id  
+{1}
+
+UNION ALL
+
+SELECT
+        2 AS prio,
 	AV.Paaluokka_Id AS MainMarkId,
 	AV.Kaavamerkinta AS Description,
 	AV.Pinala AS AreaSize,
@@ -123,7 +176,9 @@ FROM
 	LEFT OUTER JOIN [{0}]..[Aluevaraus] AV ON
 		A.Asemakaava_Id = AV.Asemakaava_Id
 {1}
-ORDER BY AV.Kaavamerkinta 
+ORDER BY
+    prio,
+    Description
 ";
             string queryString;
             switch (this.QueryType) {
@@ -146,6 +201,11 @@ ORDER BY AV.Kaavamerkinta
             queryString = string.Format(queryString,
                 ConfigurationManager.AppSettings["DbKatse"],
                 whereExpr);
+
+            foreach (var param in this.Parameters) {
+                Debug.WriteLine("{0}: {1}", param.Key, param.Value);
+            }
+            Debug.WriteLine(queryString);
             return queryString;
         }
     }

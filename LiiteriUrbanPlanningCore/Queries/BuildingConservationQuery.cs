@@ -71,58 +71,102 @@ namespace LiiteriUrbanPlanningCore.Queries
         {
             string queryStringMain = @"
 SELECT
-	RST.RakennusSuojTyyppi_Id AS ConservationTypeId,
-	RST.RakennusSuojTyyppi As ConservationTypeName,
-	sum(RS.Lkm) AS BuildingCount,
-	sum(RS.Kerrosala) AS FloorSpace,
-	sum(RS.MuutosLkm) AS ChangeCount,
-	sum(RS.MuutosKerrosala) AS ChangeFloorSpace
+    1 AS prio,
+    NULL AS ConservationTypeId,
+    'Yhteensä' As ConservationTypeName,
+    sum(RS.Lkm) AS BuildingCount,
+    sum(RS.Kerrosala) AS FloorSpace,
+    sum(RS.MuutosLkm) AS ChangeCount,
+    sum(RS.MuutosKerrosala) AS ChangeFloorSpace
 FROM
-	[{0}]..[Asemakaava] A
-	LEFT OUTER JOIN [{0}]..[RakennusSuoj] RS ON
-		RS.Asemakaava_Id = A.Asemakaava_Id
-	INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
-		RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
+    [{0}]..[Asemakaava] A
+    LEFT OUTER JOIN [{0}]..[RakennusSuoj] RS ON
+        RS.Asemakaava_Id = A.Asemakaava_Id
+    INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
+        RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
+{1}
+
+UNION ALL
+
+SELECT
+    2 AS prio,
+    RST.RakennusSuojTyyppi_Id AS ConservationTypeId,
+    RST.RakennusSuojTyyppi As ConservationTypeName,
+    sum(RS.Lkm) AS BuildingCount,
+    sum(RS.Kerrosala) AS FloorSpace,
+    sum(RS.MuutosLkm) AS ChangeCount,
+    sum(RS.MuutosKerrosala) AS ChangeFloorSpace
+FROM
+    [{0}]..[Asemakaava] A
+    LEFT OUTER JOIN [{0}]..[RakennusSuoj] RS ON
+        RS.Asemakaava_Id = A.Asemakaava_Id
+    INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
+        RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
 {1}
 GROUP BY
-	RST.RakennusSuojTyyppi_Id,
-	RST.RakennusSuojTyyppi
+    RST.RakennusSuojTyyppi_Id,
+    RST.RakennusSuojTyyppi
+
 ORDER BY
-	RST.RakennusSuojTyyppi
+    prio,
+    ConservationTypeId
 ";
 
             string queryStringSub = @"
 SELECT
-	NULL AS ConservationTypeId,
-	RST.RakennusSuojTyyppi AS ConservationTypeName,
-	RSSUM.buildingcount AS BuildingCount,
-	RSSUM.floorspace AS FloorSpace,
-	RSSUM.changecount AS ChangeCount,
-	RSSUM.changefloorspace AS ChangeFloorSpace
+    1 AS prio,
+    NULL AS ConservationTypeId,
+    'Yhteensä' As ConservationTypeName,
+    sum(RS.Lkm) AS BuildingCount,
+    sum(RS.Kerrosala) AS FloorSpace,
+    sum(RS.MuutosLkm) AS ChangeCount,
+    sum(RS.MuutosKerrosala) AS ChangeFloorSpace
 FROM
-	(SELECT
-		RakennusSuojTyyppi, RakennusSuojTyyppi_Id
-	FROM
-		[{0}]..RakennusSuojTyyppi
-	WHERE
-		RakennusSuojTyyppi_Id in(1,2)) AS RST
-	LEFT OUTER JOIN (
-		SELECT
-			RS.RakennusSuojTyyppi_Id,
-			buildingcount=sum(RS.Lkm),
-			floorspace=sum(RS.Kerrosala),
-			changecount=sum(RS.MuutosLkm),
-			changefloorspace=sum(RS.MuutosKerrosala)
-FROM
-	[{0}]..[RakennusSuoj] RS
-	LEFT OUTER JOIN [{0}]..[Asemakaava] A ON
-		A.Asemakaava_Id = RS.Asemakaava_Id
+    [{0}]..[Asemakaava] A
+    LEFT OUTER JOIN [{0}]..[RakennusSuoj] RS ON
+        RS.Asemakaava_Id = A.Asemakaava_Id
+    INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
+        RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
 {1}
-GROUP BY
-	RS.RakennusSuojTyyppi_Id) AS RSSUM ON
-		RST.RakennusSuojTyyppi_Id = RSSUM.RakennusSuojTyyppi_Id
+
+UNION ALL
+
+SELECT
+    2 AS prio,
+    NULL AS ConservationTypeId,
+    RST.RakennusSuojTyyppi AS ConservationTypeName,
+    RSSUM.buildingcount AS BuildingCount,
+    RSSUM.floorspace AS FloorSpace,
+    RSSUM.changecount AS ChangeCount,
+    RSSUM.changefloorspace AS ChangeFloorSpace
+FROM
+    (SELECT
+        RakennusSuojTyyppi, RakennusSuojTyyppi_Id
+    FROM
+        [{0}]..RakennusSuojTyyppi
+    WHERE
+        RakennusSuojTyyppi_Id in(1,2)) AS RST
+    LEFT OUTER JOIN (
+        SELECT
+            RS.RakennusSuojTyyppi_Id,
+            buildingcount=sum(RS.Lkm),
+            floorspace=sum(RS.Kerrosala),
+            changecount=sum(RS.MuutosLkm),
+            changefloorspace=sum(RS.MuutosKerrosala)
+    FROM
+        [{0}]..[RakennusSuoj] RS
+        LEFT OUTER JOIN [{0}]..[Asemakaava] A ON
+            A.Asemakaava_Id = RS.Asemakaava_Id
+    {1}
+
+    GROUP BY
+        RS.RakennusSuojTyyppi_Id
+    ) AS RSSUM ON
+        RST.RakennusSuojTyyppi_Id = RSSUM.RakennusSuojTyyppi_Id
+
 ORDER BY
-	RST.RakennusSuojTyyppi
+    prio,
+    ConservationTypeId
 ";
             string queryString;
             switch (this.QueryType) {
