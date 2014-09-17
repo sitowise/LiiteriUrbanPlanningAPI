@@ -9,7 +9,7 @@ namespace LiiteriUrbanPlanningCore.Models
     public class PlanSummary : IEntity
     {
         public int PlanCount { get; set; }
-        public decimal PlanArea { get; set; }
+        public decimal? PlanArea { get; set; }
         public decimal? PlanAreaNew { get; set; }
         public decimal? UndergroundArea { get; set; }
         public decimal? PlanAreaChange { get; set; }

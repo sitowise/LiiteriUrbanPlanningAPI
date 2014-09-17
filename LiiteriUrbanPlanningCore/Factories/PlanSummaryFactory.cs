@@ -14,7 +14,7 @@ namespace LiiteriUrbanPlanningCore.Factories
             var summary = new Models.PlanSummary();
 
             summary.PlanCount = (int) rdr["PlanCount"];
-            summary.PlanArea = (decimal) rdr["PlanArea"];
+            summary.PlanArea = (decimal?) this.GetValueOrNull(rdr, "PlanArea");
             summary.PlanAreaNew = (decimal?) this.GetValueOrNull(rdr, "PlanAreaNew");
             summary.UndergroundArea = (decimal?) this.GetValueOrNull(rdr, "UndergroundArea");
             summary.PlanAreaChange = (decimal?) this.GetValueOrNull(rdr, "PlanAreaChange");
