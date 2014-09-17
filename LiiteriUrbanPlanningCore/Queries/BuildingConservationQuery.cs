@@ -146,7 +146,7 @@ FROM
         [{0}]..RakennusSuojTyyppi
     WHERE
         RakennusSuojTyyppi_Id in(1,2)) AS RST
-    LEFT OUTER JOIN (
+    INNER JOIN (
         SELECT
             RS.RakennusSuojTyyppi_Id,
             buildingcount=sum(RS.Lkm),
