@@ -18,9 +18,11 @@ using LiiteriUrbanPlanningCore.Util;
 
 namespace LiiteriUrbanPlanningAPI.Controllers
 {
+    [RoutePrefix("plansummary")]
     public class PlanSummaryController : ApiController
     {
-        [Route("plansummary/{planIds}")]
+        [Route("", Order = 2)]
+        [Route("{planIds}/", Order = 2)]
         [HttpGet]
         public PlanSummary GetPlanSummary(
             int[] planIds) // int[] conversion done by IntegerArrayModelBinder
@@ -38,8 +40,10 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             }
         }
 
-        [Route("plansummary/{planIds}/areaReservations/{type}")]
-        [Route("plansummary/areaReservations/{type}/{planIds}")]
+        [Route("areaReservations/", Order = 1)]
+        [Route("areaReservations/{type}/", Order = 1)]
+        [Route("{planIds}/areaReservations/{type}/", Order = 1)]
+        [Route("areaReservations/{type}/{planIds}/", Order = 1)]
         [HttpGet]
         public IEnumerable<AreaReservation> GetPlanSummaryAreaReservations(
             int[] planIds,
@@ -69,8 +73,10 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             }
         }
 
-        [Route("plansummary/{planIds}/undergroundAreas/{type}")]
-        [Route("plansummary/undergroundAreas/{type}/{planIds}")]
+        [Route("undergroundAreas/", Order = 1)]
+        [Route("undergroundAreas/{type}/", Order = 1)]
+        [Route("{planIds}/undergroundAreas/{type}/", Order = 1)]
+        [Route("undergroundAreas/{type}/{planIds}/", Order = 1)]
         [HttpGet]
         public IEnumerable<UndergroundArea> GetUndergroundAreas(
             int[] planIds,
@@ -100,8 +106,10 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             }
         }
 
-        [Route("plansummary/{planIds}/buildingConservations/{type}")]
-        [Route("plansummary/buildingConservations/{type}/{planIds}")]
+        [Route("buildingConservations/", Order = 1)]
+        [Route("buildingConservations/{type}/", Order = 1)]
+        [Route("{planIds}/buildingConservations/{type}/", Order = 1)]
+        [Route("buildingConservations/{type}/{planIds}/", Order = 1)]
         [HttpGet]
         public IEnumerable<BuildingConservation> GetBuildingConservations(
             int[] planIds,
