@@ -18,9 +18,25 @@ using LiiteriUrbanPlanningCore.Util;
 
 namespace LiiteriUrbanPlanningAPI.Controllers
 {
+    /* The serialization of class will be used as the POST data when
+     * providing a list of planIds for the various methods below */
+    public class PlanSummaryRequest
+    {
+        public int[] PlanIds { get; set; }
+    }
+
     [RoutePrefix("plansummary")]
     public class PlanSummaryController : ApiController
     {
+        [Route("", Order = 2)]
+        [HttpPost]
+        /* Support POST here since we can receive a large number of Ids */
+        public PlanSummary GetPlanSummary(
+            [FromBody] PlanSummaryRequest reqobj)
+        {
+            return this.GetPlanSummary(reqobj.PlanIds);
+        }
+
         [Route("", Order = 2)]
         [Route("{planIds}/", Order = 2)]
         [HttpGet]
@@ -38,6 +54,16 @@ namespace LiiteriUrbanPlanningAPI.Controllers
                 var repository = new PlanSummaryRepository(db);
                 return (PlanSummary) repository.Single(query);
             }
+        }
+
+        [Route("areaReservations/{type}/", Order = 1)]
+        [HttpPost]
+        /* Support POST here since we can receive a large number of Ids */
+        public IEnumerable<AreaReservation> GetPlanSummaryAreaReservations(
+            [FromBody] PlanSummaryRequest reqobj,
+            string type)
+        {
+            return this.GetPlanSummaryAreaReservations(reqobj.PlanIds, type);
         }
 
         [Route("areaReservations/", Order = 1)]
@@ -73,6 +99,16 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             }
         }
 
+        [Route("undergroundAreas/{type}/", Order = 1)]
+        [HttpPost]
+        /* Support POST here since we can receive a large number of Ids */
+        public IEnumerable<UndergroundArea> GetUndergroundAreas(
+            [FromBody] PlanSummaryRequest reqobj,
+            string type)
+        {
+            return this.GetUndergroundAreas(reqobj.PlanIds, type);
+        }
+
         [Route("undergroundAreas/", Order = 1)]
         [Route("undergroundAreas/{type}/", Order = 1)]
         [Route("{planIds}/undergroundAreas/{type}/", Order = 1)]
@@ -104,6 +140,16 @@ namespace LiiteriUrbanPlanningAPI.Controllers
                 var repository = new UndergroundAreaRepository(db);
                 return (List<UndergroundArea>) repository.FindAll(query);
             }
+        }
+
+        [Route("buildingConservations/{type}/", Order = 1)]
+        [HttpPost]
+        /* Support POST here since we can receive a large number of Ids */
+        public IEnumerable<BuildingConservation> GetBuildingConservations(
+            [FromBody] PlanSummaryRequest reqobj,
+            string type)
+        {
+            return this.GetBuildingConservations(reqobj.PlanIds, type);
         }
 
         [Route("buildingConservations/", Order = 1)]
