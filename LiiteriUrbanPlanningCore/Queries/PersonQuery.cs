@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
+using System.Configuration;
+
 namespace LiiteriUrbanPlanningCore.Queries
 {
     public class PersonQuery : SqlQuery, ISqlQuery
@@ -190,7 +192,7 @@ SELECT
     NULL AS VatNumber,
     'MunicipalityContact' AS PersonType
 FROM
-    [LiiteriKatse]..[KuntaMetadata] H1
+    [{2}]..[KuntaMetadata] H1
 {0}
 {1}
 ";
@@ -206,14 +208,16 @@ FROM
             joinString = "";
             if (this.add_region_join) {
                 joinString += @"
-LEFT OUTER JOIN [LiiteriHakemisto]..[Kunta] K1 ON
+LEFT OUTER JOIN [{3}]..[Kunta] K1 ON
     K1.Kunta_Id = H1.H_Kunta_Id
 ";
             }
 
             queryStringContacts = string.Format(queryStringContacts,
                 joinString,
-                whereStringContacts);
+                whereStringContacts,
+                ConfigurationManager.AppSettings["DbKatse"],
+                ConfigurationManager.AppSettings["DbHakemisto"]);
 
             string queryStringConsults = @"
 SELECT
@@ -231,7 +235,7 @@ SELECT
     H2.YritysTunnus AS VatNumber,
     'MunicipalityConsult' AS PersonType
 FROM
-    [LiiteriKatse]..[Konsultti] AS H2
+    [{2}]..[Konsultti] AS H2
 {0}
 {1}
 ";
@@ -244,16 +248,18 @@ FROM
             joinString = "";
             if (this.add_region_join) {
                 joinString += @"
-INNER JOIN [LiiteriKatse]..[KuntaKonsultti] KK ON
+INNER JOIN [{2}]..[KuntaKonsultti] KK ON
     H2.KayttajaTunnus = KK.KayttajaTunnus
-INNER JOIN [LiiteriHakemisto]..[Kunta] K2 ON
+INNER JOIN [{3}]..[Kunta] K2 ON
     K2.Kunta_Id = KK.H_Kunta_Id
 ";
             }
 
             queryStringConsults = string.Format(queryStringConsults,
                 joinString,
-                whereStringConsults);
+                whereStringConsults,
+                ConfigurationManager.AppSettings["DbKatse"],
+                ConfigurationManager.AppSettings["DbHakemisto"]);
 
             List<string> queryStrings = new List<string>();
 
