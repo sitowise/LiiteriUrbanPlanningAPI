@@ -144,7 +144,7 @@ namespace LiiteriUrbanPlanningCore.Queries
                     sb.Append("T.Nimi AS name, ");
                     sb.Append("'subRegion' AS regionType ");
                     sb.Append(string.Format(
-                        "FROM [{0}].[dbo].[Seutukunta] T", dbName));
+                        "FROM [{0}].[dbo].[Seutukunta] T ", dbName));
                     break;
                 case "municipality": // Kunta
                     // Tämä voisi ainakin ottaa:
@@ -159,7 +159,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
 
             if (this.whereList.Count > 0) {
-                sb.Append("WHERE ");
+                sb.Append("\nWHERE ");
                 sb.Append(string.Join(" AND ", whereList));
             }
             Debug.WriteLine(sb.ToString());
