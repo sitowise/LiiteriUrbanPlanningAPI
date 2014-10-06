@@ -122,7 +122,7 @@ namespace LiiteriUrbanPlanningCore.Queries
                         "FROM [{0}].[dbo].[HallintoOikeus] T ", dbName));
                     break;
                 case "ely": // Ely
-                    sb.Append("T.YmpVastuuElyID AS regionId, ");
+                    sb.Append("T.YmpVastuuEly_Id AS regionId, ");
                     sb.Append("T.YmparistoElyNimi AS name, ");
                     sb.Append("'ely' AS regionType ");
                     sb.Append(string.Format(
