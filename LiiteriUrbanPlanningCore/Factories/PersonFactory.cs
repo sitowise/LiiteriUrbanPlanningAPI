@@ -28,6 +28,15 @@ namespace LiiteriUrbanPlanningCore.Factories
 
             person.PersonType = rdr["PersonType"].ToString();
 
+            int? consultAuthorized = (int?)
+                this.GetValueOrNull(rdr, "ConsultAuthorized");
+            if (consultAuthorized != null) {
+                person.ConsultAuthorized =
+                    consultAuthorized == 1 ? true : false;
+            } else {
+                person.ConsultAuthorized = null;
+            }
+
             return person;
         }
     }

@@ -9,6 +9,7 @@ namespace LiiteriUrbanPlanningCore.Models
     public class PlanBrief : Models.IEntity
     {
         public int Id { get; set; }                     // Id
+        public int? TyviId { get; set; }                // TYVI Id
         public string Name { get; set; }                // Nimi
         public int MunicipalityId { get; set; }         // Kunta
         public string MunicipalityPlanId { get; set; }  // Kunnan kaavatunnus

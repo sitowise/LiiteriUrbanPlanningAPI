@@ -95,7 +95,7 @@ UNION ALL
 
 SELECT
     2 AS prio,
-    S.Paaluokka_Id AS MainMarkId,
+    KPL.Paaluokka_Id AS MainMarkId,
     KPL.NaytonSelite AS Description,
     S.area AS AreaSize,
     S.areapros AS AreaPercent,

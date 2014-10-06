@@ -14,6 +14,7 @@ namespace LiiteriUrbanPlanningCore.Factories
             var p = new Models.Plan();
 
             p.Id = (int) rdr["Id"];
+            p.TyviId = (int?) this.GetValueOrNull(rdr, "TyviId");
             p.Name = rdr["Name"].ToString();
             p.MunicipalityId = (int) rdr["MunicipalityId"];
             p.MunicipalityPlanId = rdr["MunicipalityPlanId"].ToString();

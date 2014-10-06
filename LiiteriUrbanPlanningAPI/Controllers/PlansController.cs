@@ -23,6 +23,7 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [HttpGet]
         public IEnumerable<PlanBrief> GetPlans(
             string planName = null,
+            int? tyviId = null,
             string generatedPlanId = null,
             string municipalityPlanId = null,
             string approver = null,
@@ -71,6 +72,7 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             query.GreaterAreaIs = greaterArea;
             query.AdministrativeCourtIs = administrativeCourt;
             query.MunicipalityIs = municipality;
+            query.TyviIdIs = tyviId;
 
             string connStr =
                 ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();

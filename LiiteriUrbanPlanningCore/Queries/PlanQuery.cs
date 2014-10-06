@@ -77,6 +77,18 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
         }
 
+        public int? TyviIdIs
+        {
+            get {
+                return (int?) this.GetParameter("@TyviIdIs");
+            }
+            set {
+                if (value == null) return;
+                this.whereList.Add("A.Tyvi_id = @TyviIdIs");
+                this.AddParameter("@TyviIdIs", value);
+            }
+        }
+
         public string MunicipalityPlanIdIs
         {
             get {
@@ -211,7 +223,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add("K.Ely_Id = @ElyIs");
+                this.whereList.Add("K.YmpVastuuEly_ID = @ElyIs");
                 this.AddParameter("@ElyIs", (int) value);
             }
         }
@@ -300,6 +312,7 @@ namespace LiiteriUrbanPlanningCore.Queries
 
             sb.Append("A.Nimi AS Name, ");
             sb.Append("A.Asemakaava_ID AS Id, ");
+            sb.Append("A.Tyvi_id AS TyviId, ");
             sb.Append("A.H_Kunta_Id AS MunicipalityId, ");
             sb.Append("A.KuntaKaavaTunnus AS MunicipalityPlanId, ");
             sb.Append("A.GenKaavaTunnus AS GeneratedPlanId, ");

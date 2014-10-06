@@ -179,6 +179,7 @@ H2.Toimisto LIKE @SearchKeyword)
 
             string queryStringContacts = @"
 SELECT
+    COALESCE(KV.authorise, 0) AS ConsultAuthorized,
     H1.PaaKayttajaEtunimi AS FirstName,
     H1.PaaKayttajaSukunimi AS LastName,
     H1.SpostiOsoite AS Email,
@@ -193,6 +194,17 @@ SELECT
     'MunicipalityContact' AS PersonType
 FROM
     [{2}]..[KuntaMetadata] H1
+
+LEFT OUTER JOIN (
+    SELECT
+        DISTINCT
+        H_Kunta_Id,
+        1 as authorise
+    FROM
+        [LiiteriKatse]..[KuntaKonsultti]
+    ) KV ON
+        KV.H_Kunta_Id = H1.H_Kunta_Id
+
 {0}
 {1}
 ";
@@ -208,9 +220,11 @@ FROM
             joinString = "";
             if (this.add_region_join) {
                 joinString += @"
-LEFT OUTER JOIN [{3}]..[Kunta] K1 ON
+LEFT OUTER JOIN [{0}]..[Kunta] K1 ON
     K1.Kunta_Id = H1.H_Kunta_Id
 ";
+                joinString = string.Format(joinString,
+                    ConfigurationManager.AppSettings["DbHakemisto"]);
             }
 
             queryStringContacts = string.Format(queryStringContacts,
@@ -222,6 +236,7 @@ LEFT OUTER JOIN [{3}]..[Kunta] K1 ON
             string queryStringConsults = @"
 SELECT
     DISTINCT
+    NULL AS ConsultAuthorized,
     H2.Nimi AS OrganizationName,
     H2.Etunimi AS FirstName,
     H2.Sukunimi AS LastName,
@@ -248,11 +263,14 @@ FROM
             joinString = "";
             if (this.add_region_join) {
                 joinString += @"
-INNER JOIN [{2}]..[KuntaKonsultti] KK ON
+INNER JOIN [{0}]..[KuntaKonsultti] KK ON
     H2.KayttajaTunnus = KK.KayttajaTunnus
-INNER JOIN [{3}]..[Kunta] K2 ON
+INNER JOIN [{1}]..[Kunta] K2 ON
     K2.Kunta_Id = KK.H_Kunta_Id
 ";
+                joinString = string.Format(joinString,
+                    ConfigurationManager.AppSettings["DbKatse"],
+                    ConfigurationManager.AppSettings["DbHakemisto"]);
             }
 
             queryStringConsults = string.Format(queryStringConsults,
