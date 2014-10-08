@@ -12,6 +12,7 @@ namespace LiiteriUrbanPlanningCore.Models
         public int? TyviId { get; set; }                // TYVI Id
         public string Name { get; set; }                // Nimi
         public int MunicipalityId { get; set; }         // Kunta
+        public string MunicipalityName { get; set; }
         public string MunicipalityPlanId { get; set; }  // Kunnan kaavatunnus
         public string GeneratedPlanId { get; set; }     // Gen.kaavatunnus
 

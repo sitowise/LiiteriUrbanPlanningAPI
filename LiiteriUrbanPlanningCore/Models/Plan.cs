@@ -8,7 +8,6 @@ namespace LiiteriUrbanPlanningCore.Models
 {
     public class Plan : PlanBrief, IEntity
     {
-        public string MunicipalityName { get; set; }
         public string DecisionMaker { get; set; }
         public string DecisionNumber { get; set; }
         public decimal? PlanArea { get; set; }
