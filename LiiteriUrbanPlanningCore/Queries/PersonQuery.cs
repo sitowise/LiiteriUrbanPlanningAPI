@@ -16,8 +16,6 @@ namespace LiiteriUrbanPlanningCore.Queries
 
         public int QueryType { get; set; }
 
-        private bool add_region_join = false;
-
         #region expressions
 
         // Ely
@@ -33,7 +31,6 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.whereListContacts.Add("K1.Ely_Id = @ElyIs");
                 this.whereListConsults.Add("K2.Ely_Id = @ElyIs");
                 this.AddParameter("@ElyIs", (int) value);
-                this.add_region_join = true;
             }
         }
 
@@ -50,7 +47,6 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.whereListContacts.Add("K1.Seutukunta_Id = @SubRegionIs");
                 this.whereListConsults.Add("K2.Seutukunta_Id = @SubRegionIs");
                 this.AddParameter("@SubRegionIs", (int) value);
-                this.add_region_join = true;
             }
         }
 
@@ -67,7 +63,6 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.whereListContacts.Add("K1.Maakunta_Id = @CountyIs");
                 this.whereListConsults.Add("K2.Maakunta_Id = @CountyIs");
                 this.AddParameter("@CountyIs", (int) value);
-                this.add_region_join = true;
             }
         }
 
@@ -84,7 +79,6 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.whereListContacts.Add("K1.Suuralue_Id = @GreaterAreaIs");
                 this.whereListConsults.Add("K2.Suuralue_Id = @GreaterAreaIs");
                 this.AddParameter("@GreaterAreaIs", (int) value);
-                this.add_region_join = true;
             }
         }
 
@@ -103,7 +97,6 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.whereListConsults.Add(
                     "K2.HallintoOikeus_Id = @AdministrativeCourtIs");
                 this.AddParameter("@AdministrativeCourtIs", (int) value);
-                this.add_region_join = true;
             }
         }
 
@@ -120,7 +113,6 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.whereListContacts.Add("K1.Kunta_Id = @MunicipalityIs");
                 this.whereListConsults.Add("K2.Kunta_Id = @MunicipalityIs");
                 this.AddParameter("@MunicipalityIs", (int) value);
-                this.add_region_join = true;
             }
         }
 
@@ -175,11 +167,11 @@ H2.Toimisto LIKE @SearchKeyword)
         public override string GetQueryString()
         {
             List<string> joinList = new List<string>();
-            string joinString;
 
             string queryStringContacts = @"
 SELECT
     COALESCE(KV.authorise, 0) AS ConsultAuthorized,
+    K1.Kunta_Id AS MunicipalityId,
     H1.PaaKayttajaEtunimi AS FirstName,
     H1.PaaKayttajaSukunimi AS LastName,
     H1.SpostiOsoite AS Email,
@@ -193,7 +185,7 @@ SELECT
     NULL AS VatNumber,
     'MunicipalityContact' AS PersonType
 FROM
-    [{2}]..[KuntaMetadata] H1
+    [{1}]..[KuntaMetadata] H1
 
 LEFT OUTER JOIN (
     SELECT
@@ -205,8 +197,10 @@ LEFT OUTER JOIN (
     ) KV ON
         KV.H_Kunta_Id = H1.H_Kunta_Id
 
+LEFT OUTER JOIN [{2}]..[Kunta] K1 ON
+    K1.Kunta_Id = H1.H_Kunta_Id
+
 {0}
-{1}
 ";
             this.whereListContacts.Add("H1.PaaKayttajaSukunimi IS NOT NULL");
 
@@ -216,19 +210,7 @@ LEFT OUTER JOIN (
                     string.Join(" AND ", this.whereListContacts));
             }
 
-
-            joinString = "";
-            if (this.add_region_join) {
-                joinString += @"
-LEFT OUTER JOIN [{0}]..[Kunta] K1 ON
-    K1.Kunta_Id = H1.H_Kunta_Id
-";
-                joinString = string.Format(joinString,
-                    ConfigurationManager.AppSettings["DbHakemisto"]);
-            }
-
             queryStringContacts = string.Format(queryStringContacts,
-                joinString,
                 whereStringContacts,
                 ConfigurationManager.AppSettings["DbKatse"],
                 ConfigurationManager.AppSettings["DbHakemisto"]);
@@ -237,6 +219,7 @@ LEFT OUTER JOIN [{0}]..[Kunta] K1 ON
 SELECT
     DISTINCT
     NULL AS ConsultAuthorized,
+    NULL AS MunicipalityId,
     H2.Nimi AS OrganizationName,
     H2.Etunimi AS FirstName,
     H2.Sukunimi AS LastName,
@@ -250,9 +233,12 @@ SELECT
     H2.YritysTunnus AS VatNumber,
     'MunicipalityConsult' AS PersonType
 FROM
-    [{2}]..[Konsultti] AS H2
+    [{1}]..[Konsultti] AS H2
+    LEFT OUTER JOIN [{1}]..[KuntaKonsultti] KK ON
+        H2.KayttajaTunnus = KK.KayttajaTunnus
+    LEFT OUTER JOIN [{2}]..[Kunta] K2 ON
+        K2.Kunta_Id = KK.H_Kunta_Id
 {0}
-{1}
 ";
             string whereStringConsults = "";
             if (this.whereListConsults.Count > 0) {
@@ -260,21 +246,7 @@ FROM
                     string.Join(" AND ", this.whereListConsults));
             }
 
-            joinString = "";
-            if (this.add_region_join) {
-                joinString += @"
-INNER JOIN [{0}]..[KuntaKonsultti] KK ON
-    H2.KayttajaTunnus = KK.KayttajaTunnus
-INNER JOIN [{1}]..[Kunta] K2 ON
-    K2.Kunta_Id = KK.H_Kunta_Id
-";
-                joinString = string.Format(joinString,
-                    ConfigurationManager.AppSettings["DbKatse"],
-                    ConfigurationManager.AppSettings["DbHakemisto"]);
-            }
-
             queryStringConsults = string.Format(queryStringConsults,
-                joinString,
                 whereStringConsults,
                 ConfigurationManager.AppSettings["DbKatse"],
                 ConfigurationManager.AppSettings["DbHakemisto"]);

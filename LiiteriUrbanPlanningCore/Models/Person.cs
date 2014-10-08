@@ -21,5 +21,6 @@ namespace LiiteriUrbanPlanningCore.Models
         public string PersonType { get; set; }
         public string VatNumber { get; set; }
         public bool? ConsultAuthorized { get; set; }
+        public int? MunicipalityId { get; set; }
     }
 }

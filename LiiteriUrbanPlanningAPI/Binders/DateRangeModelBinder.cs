@@ -47,5 +47,4 @@ namespace LiiteriUrbanPlanningAPI.Binders
             return true;
         }
     }
-
 }
