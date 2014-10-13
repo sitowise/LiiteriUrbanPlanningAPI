@@ -127,6 +127,7 @@ namespace LiiteriUrbanPlanningCore.Queries
                     sb.Append("'ely' AS regionType ");
                     sb.Append(string.Format(
                         "FROM [{0}].[dbo].[Ely] T ", dbName));
+                    this.whereList.Add("YmparistoEly = 1");
                     break;
                 case "county": // Maakunta
                     // Tämä voisi ainakin ottaa:
