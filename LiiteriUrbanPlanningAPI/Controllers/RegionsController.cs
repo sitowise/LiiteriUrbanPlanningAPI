@@ -39,22 +39,22 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [HttpGet]
         public IEnumerable<Region> GetRegions(
             string regionType,
-            int? ely = null,
-            int? subRegion = null,
-            int? county = null,
-            int? greaterArea = null,
-            int? administrativeCourt = null)
+            int[] ely = null,
+            int[] subRegion = null,
+            int[] county = null,
+            int[] greaterArea = null,
+            int[] administrativeCourt = null)
         {
             string connStr =
                 ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
 
             RegionQuery query = new RegionQuery(regionType);
 
-            query.ElyIs = ely;
-            query.SubRegionIs = subRegion;
-            query.CountyIs = county;
-            query.GreaterAreaIs = greaterArea;
-            query.AdministrativeCourtIs = administrativeCourt;
+            query.ElyIn = ely;
+            query.SubRegionIn = subRegion;
+            query.CountyIn = county;
+            query.GreaterAreaIn = greaterArea;
+            query.AdministrativeCourtIn = administrativeCourt;
 
             using (DbConnection db = new SqlConnection(connStr)) {
                 db.Open();

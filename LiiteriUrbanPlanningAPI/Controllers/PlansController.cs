@@ -23,21 +23,21 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [HttpGet]
         public IEnumerable<PlanBrief> GetPlans(
             string planName = null,
-            int? tyviId = null,
-            string generatedPlanId = null,
-            string municipalityPlanId = null,
-            string approver = null,
+            int[] tyviId = null,
+            string[] generatedPlanId = null,
+            string[] municipalityPlanId = null,
+            string[] approver = null,
             string planType = null,
             DateRange approvalDateWithin = null,
             DateRange proposalDateWithin = null,
             DateRange initialDateWithin = null,
             DateRange fillDateWithin = null,
-            int? ely = null,
-            int? subRegion = null,
-            int? county = null,
-            int? greaterArea = null,
-            int? administrativeCourt = null,
-            int? municipality = null)
+            int[] ely = null,
+            int[] subRegion = null,
+            int[] county = null,
+            int[] greaterArea = null,
+            int[] administrativeCourt = null,
+            int[] municipality = null)
         {
             PlanQuery query = new PlanQuery();
 
@@ -45,9 +45,10 @@ namespace LiiteriUrbanPlanningAPI.Controllers
                 query.NameLike = "%" + planName + "%";
             }
 
-            query.GeneratedPlanIdIs = generatedPlanId;
-            query.MunicipalityPlanIdIs = municipalityPlanId;
-            query.ApproverIs = approver;
+            query.GeneratedPlanIdIn = generatedPlanId;
+            query.MunicipalityPlanIdIn = municipalityPlanId;
+            query.ApproverIn = approver;
+            query.TyviIdIn = tyviId;
 
             if (planType != null) {
                 query.PlanTypeIn = planType.Split(',').ToList().ConvertAll(
@@ -66,13 +67,12 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             query.InitialDateWithin = initialDateWithin;
             query.FillDateWithin = fillDateWithin;
 
-            query.ElyIs = ely;
-            query.SubRegionIs = subRegion;
-            query.CountyIs = county;
-            query.GreaterAreaIs = greaterArea;
-            query.AdministrativeCourtIs = administrativeCourt;
-            query.MunicipalityIs = municipality;
-            query.TyviIdIs = tyviId;
+            query.ElyIn = ely;
+            query.SubRegionIn = subRegion;
+            query.CountyIn = county;
+            query.GreaterAreaIn = greaterArea;
+            query.AdministrativeCourtIn = administrativeCourt;
+            query.MunicipalityIn = municipality;
 
             string connStr =
                 ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();

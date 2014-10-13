@@ -77,6 +77,27 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
         }
 
+        private string[] _GeneratedPlanIdIn;
+        public string[] GeneratedPlanIdIn
+        {
+            get {
+                return this._GeneratedPlanIdIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._GeneratedPlanIdIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._GeneratedPlanIdIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("GeneratedPlanIdIn", value);
+                this.whereList.Add(string.Format(
+                    "A.GenKaavaTunnus IN ({0})",
+                    string.Join(", ", paramNames)));
+            }
+        }
+
         public int? TyviIdIs
         {
             get {
@@ -86,6 +107,26 @@ namespace LiiteriUrbanPlanningCore.Queries
                 if (value == null) return;
                 this.whereList.Add("A.Tyvi_id = @TyviIdIs");
                 this.AddParameter("@TyviIdIs", value);
+            }
+        }
+
+        private int[] _TyviIdIn;
+        public int[] TyviIdIn
+        {
+            get {
+                return this._TyviIdIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._TyviIdIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._TyviIdIn = value;
+
+                string[] paramNames = this.PushParameters("TyviIdIn", value);
+                this.whereList.Add(string.Format(
+                    "A.Tyvi_Id IN ({0})",
+                    string.Join(", ", paramNames)));
             }
         }
 
@@ -101,6 +142,27 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
         }
 
+        private string[] _MunicipalityPlanIdIn;
+        public string[] MunicipalityPlanIdIn
+        {
+            get {
+                return this._MunicipalityPlanIdIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._MunicipalityPlanIdIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._MunicipalityPlanIdIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("MunicipalityPlanIdIn", value);
+                this.whereList.Add(string.Format(
+                    "A.KuntaKaavaTunnus IN ({0})",
+                    string.Join(", ", paramNames)));
+            }
+        }
+
         public string ApproverIs
         {
             get {
@@ -111,6 +173,27 @@ namespace LiiteriUrbanPlanningCore.Queries
                 this.whereList.Add(
                     "(H.Hyvaksyja = @ApproverIs OR H.Selite = @ApproverIs)");
                 this.AddParameter("@ApproverIs", value);
+            }
+        }
+
+        private string[] _ApproverIn;
+        public string[] ApproverIn
+        {
+            get {
+                return this._ApproverIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._ApproverIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._ApproverIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("ApproverIn", value);
+                this.whereList.Add(string.Format(
+                    "H.Hyvaksyja IN ({0})",
+                    string.Join(", ", paramNames)));
             }
         }
 
@@ -228,6 +311,27 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
         }
 
+        private int[] _ElyIn;
+        public int[] ElyIn
+        {
+            get {
+                return this._ElyIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._ElyIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._ElyIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("ElyIn", value);
+                this.whereList.Add(string.Format(
+                    "K.YmpVastuuEly_ID IN ({0})",
+                    string.Join(", ", paramNames)));
+            }
+        }
+
         // Seutukunta
         public int? SubRegionIs
         {
@@ -240,6 +344,27 @@ namespace LiiteriUrbanPlanningCore.Queries
                 if (value == null) return;
                 this.whereList.Add("K.Seutukunta_Id = @SubRegionIs");
                 this.AddParameter("@SubRegionIs", (int) value);
+            }
+        }
+
+        private int[] _SubRegionIn;
+        public int[] SubRegionIn
+        {
+            get {
+                return this._SubRegionIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._ElyIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._SubRegionIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("SubRegionIn", value);
+                this.whereList.Add(string.Format(
+                    "K.Seutukunta_Id IN ({0})",
+                    string.Join(", ", paramNames)));
             }
         }
 
@@ -258,6 +383,27 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
         }
 
+        private int[] _CountyIn;
+        public int[] CountyIn
+        {
+            get {
+                return this._CountyIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._CountyIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._CountyIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("CountyIn", value);
+                this.whereList.Add(string.Format(
+                    "K.Maakunta_Id IN ({0})",
+                    string.Join(", ", paramNames)));
+            }
+        }
+
         // Suuralue
         public int? GreaterAreaIs
         {
@@ -270,6 +416,27 @@ namespace LiiteriUrbanPlanningCore.Queries
                 if (value == null) return;
                 this.whereList.Add("K.Suuralue_Id = @GreaterAreaIs");
                 this.AddParameter("@GreaterAreaIs", (int) value);
+            }
+        }
+
+        private int[] _GreaterAreaIn;
+        public int[] GreaterAreaIn
+        {
+            get {
+                return this._GreaterAreaIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._GreaterAreaIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._GreaterAreaIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("GreaterAreaIn", value);
+                this.whereList.Add(string.Format(
+                    "K.Suuralue_Id IN ({0})",
+                    string.Join(", ", paramNames)));
             }
         }
 
@@ -288,6 +455,27 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
         }
 
+        private int[] _AdministrativeCourtIn;
+        public int[] AdministrativeCourtIn
+        {
+            get {
+                return this._AdministrativeCourtIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._AdministrativeCourtIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._AdministrativeCourtIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("AdministrativeCourtIn", value);
+                this.whereList.Add(string.Format(
+                    "K.HallintoOikeus_Id IN ({0})",
+                    string.Join(", ", paramNames)));
+            }
+        }
+
         // Kunta
         public int? MunicipalityIs
         {
@@ -300,6 +488,27 @@ namespace LiiteriUrbanPlanningCore.Queries
                 if (value == null) return;
                 this.whereList.Add("K.Kunta_Id = @MunicipalityIs");
                 this.AddParameter("@MunicipalityIs", (int) value);
+            }
+        }
+
+        private int[] _MunicipalityIn;
+        public int[] MunicipalityIn
+        {
+            get {
+                return this._MunicipalityIn;
+            }
+            set {
+                if (value == null) return;
+                if (this._MunicipalityIn != null) {
+                    throw new ArgumentException("Value already set!");
+                }
+                this._MunicipalityIn = value;
+
+                string[] paramNames =
+                    this.PushParameters("MunicipalityIn", value);
+                this.whereList.Add(string.Format(
+                    "K.Kunta_Id IN ({0})",
+                    string.Join(", ", paramNames)));
             }
         }
 

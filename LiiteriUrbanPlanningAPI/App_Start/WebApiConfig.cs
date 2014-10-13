@@ -18,6 +18,9 @@ namespace LiiteriUrbanPlanningAPI
             GlobalConfiguration.Configuration.BindParameter(
                 typeof(int[]), new Binders.IntegerArrayModelBinder());
 
+            GlobalConfiguration.Configuration.BindParameter(
+                typeof(string[]), new Binders.StringArrayModelBinder());
+
             // Web API routes
             config.MapHttpAttributeRoutes();
 
