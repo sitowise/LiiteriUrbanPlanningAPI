@@ -20,20 +20,17 @@ namespace LiiteriUrbanPlanningCore.Repositories
 
         public override IEnumerable<Models.AreaReservation> FindAll(Queries.ISqlQuery query)
         {
-            return this.FindAll(query,
-                new Factories.AreaReservationFactory());
+            return this.FindAll(query, new Factories.AreaReservationFactory());
         }
 
         public override Models.AreaReservation Single(Queries.ISqlQuery query)
         {
-            return this.FindAll(query,
-                new Factories.AreaReservationFactory()).Single();
+            return this.FindAll(query).Single();
         }
 
         public override Models.AreaReservation First(Queries.ISqlQuery query)
         {
-            return this.FindAll(query,
-                new Factories.AreaReservationFactory()).First();
+            return this.FindAll(query).First();
         }
     }
 }
