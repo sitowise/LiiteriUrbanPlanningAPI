@@ -109,7 +109,7 @@ SELECT
     KPL.Paaluokka_Id AS MainMarkId,
     KPL.NaytonSelite AS Description,
     S.area AS AreaSize,
-    ROUND((S.area / @TotalAreaSize * 100.0), 4) AS AreaPercent,
+    ROUND((S.area / @TotalAreaSize * 100.0), 1) AS AreaPercent,
     S.floorspace AS FloorSpace,
     S.effectiveness AS Efficiency,
     S.areachange AS AreaChange,
