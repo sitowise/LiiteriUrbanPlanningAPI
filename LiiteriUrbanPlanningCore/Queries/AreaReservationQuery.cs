@@ -78,8 +78,7 @@ FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[Aluevaraus] AV ON
         A.Asemakaava_Id = AV.Asemakaava_Id  
-WHERE
-    A.Asemakaava_Id = @PlanIdIs
+{1}
 
 SELECT
     1 AS prio,
@@ -109,7 +108,10 @@ SELECT
     KPL.Paaluokka_Id AS MainMarkId,
     KPL.NaytonSelite AS Description,
     S.area AS AreaSize,
-    ROUND((S.area / @TotalAreaSize * 100.0), 1) AS AreaPercent,
+    (CASE
+        WHEN @TotalAreaSize  > 0
+        THEN ROUND((S.area / @TotalAreaSize * 100.0), 1)
+        ELSE 0 END) AS AreaPercent,
     S.floorspace AS FloorSpace,
     S.effectiveness AS Efficiency,
     S.areachange AS AreaChange,
