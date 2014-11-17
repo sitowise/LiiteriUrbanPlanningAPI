@@ -31,8 +31,10 @@ namespace LiiteriUrbanPlanningCore.Factories
             object municipalityId = this.GetValueOrNull(rdr, "MunicipalityId");
             if (municipalityId == null) {
                 person.MunicipalityId = null;
+                person.MunicipalityName = null;
             } else {
                 person.MunicipalityId = Convert.ToInt32(municipalityId); // short
+                person.MunicipalityName = rdr["MunicipalityName"].ToString();
             }
 
             int? consultAuthorized = (int?)

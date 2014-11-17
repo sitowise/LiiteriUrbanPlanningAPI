@@ -172,6 +172,7 @@ H2.Toimisto LIKE @SearchKeyword)
 SELECT
     COALESCE(KV.authorise, 0) AS ConsultAuthorized,
     K1.Kunta_Id AS MunicipalityId,
+    K1.Nimi AS MunicipalityName,
     H1.PaaKayttajaEtunimi AS FirstName,
     H1.PaaKayttajaSukunimi AS LastName,
     H1.SpostiOsoite AS Email,
@@ -220,6 +221,7 @@ SELECT
     DISTINCT
     NULL AS ConsultAuthorized,
     NULL AS MunicipalityId,
+    NULL AS MunicipalityName,
     H2.Nimi AS OrganizationName,
     H2.Etunimi AS FirstName,
     H2.Sukunimi AS LastName,
