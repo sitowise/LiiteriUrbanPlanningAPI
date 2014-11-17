@@ -21,10 +21,12 @@ namespace LiiteriUrbanPlanningCore.Queries
         };
 
         private List<string> whereList;
+        private List<string> areaWhereList;
 
         public PlanQuery()
         {
             this.whereList = new List<string>();
+            this.areaWhereList = new List<string>();
         }
 
         #region expressions
@@ -306,7 +308,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add("K.YmpVastuuEly_ID = @ElyIs");
+                this.areaWhereList.Add("K.YmpVastuuEly_ID = @ElyIs");
                 this.AddParameter("@ElyIs", (int) value);
             }
         }
@@ -326,7 +328,7 @@ namespace LiiteriUrbanPlanningCore.Queries
 
                 string[] paramNames =
                     this.PushParameters("ElyIn", value);
-                this.whereList.Add(string.Format(
+                this.areaWhereList.Add(string.Format(
                     "K.YmpVastuuEly_ID IN ({0})",
                     string.Join(", ", paramNames)));
             }
@@ -342,7 +344,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add("K.Seutukunta_Id = @SubRegionIs");
+                this.areaWhereList.Add("K.Seutukunta_Id = @SubRegionIs");
                 this.AddParameter("@SubRegionIs", (int) value);
             }
         }
@@ -355,14 +357,14 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
             set {
                 if (value == null) return;
-                if (this._ElyIn != null) {
+                if (this._SubRegionIn != null) {
                     throw new ArgumentException("Value already set!");
                 }
                 this._SubRegionIn = value;
 
                 string[] paramNames =
                     this.PushParameters("SubRegionIn", value);
-                this.whereList.Add(string.Format(
+                this.areaWhereList.Add(string.Format(
                     "K.Seutukunta_Id IN ({0})",
                     string.Join(", ", paramNames)));
             }
@@ -378,7 +380,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add("K.Maakunta_Id = @CountyIs");
+                this.areaWhereList.Add("K.Maakunta_Id = @CountyIs");
                 this.AddParameter("@CountyIs", (int) value);
             }
         }
@@ -398,7 +400,7 @@ namespace LiiteriUrbanPlanningCore.Queries
 
                 string[] paramNames =
                     this.PushParameters("CountyIn", value);
-                this.whereList.Add(string.Format(
+                this.areaWhereList.Add(string.Format(
                     "K.Maakunta_Id IN ({0})",
                     string.Join(", ", paramNames)));
             }
@@ -414,7 +416,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add("K.Suuralue_Id = @GreaterAreaIs");
+                this.areaWhereList.Add("K.Suuralue_Id = @GreaterAreaIs");
                 this.AddParameter("@GreaterAreaIs", (int) value);
             }
         }
@@ -434,7 +436,7 @@ namespace LiiteriUrbanPlanningCore.Queries
 
                 string[] paramNames =
                     this.PushParameters("GreaterAreaIn", value);
-                this.whereList.Add(string.Format(
+                this.areaWhereList.Add(string.Format(
                     "K.Suuralue_Id IN ({0})",
                     string.Join(", ", paramNames)));
             }
@@ -450,7 +452,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add("K.HallintoOikeus_Id = @AdministrativeCourtIs");
+                this.areaWhereList.Add("K.HallintoOikeus_Id = @AdministrativeCourtIs");
                 this.AddParameter("@AdministrativeCourtIs", (int) value);
             }
         }
@@ -470,7 +472,7 @@ namespace LiiteriUrbanPlanningCore.Queries
 
                 string[] paramNames =
                     this.PushParameters("AdministrativeCourtIn", value);
-                this.whereList.Add(string.Format(
+                this.areaWhereList.Add(string.Format(
                     "K.HallintoOikeus_Id IN ({0})",
                     string.Join(", ", paramNames)));
             }
@@ -486,7 +488,7 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereList.Add("K.Kunta_Id = @MunicipalityIs");
+                this.areaWhereList.Add("K.Kunta_Id = @MunicipalityIs");
                 this.AddParameter("@MunicipalityIs", (int) value);
             }
         }
@@ -506,7 +508,7 @@ namespace LiiteriUrbanPlanningCore.Queries
 
                 string[] paramNames =
                     this.PushParameters("MunicipalityIn", value);
-                this.whereList.Add(string.Format(
+                this.areaWhereList.Add(string.Format(
                     "K.Kunta_Id IN ({0})",
                     string.Join(", ", paramNames)));
             }
@@ -572,6 +574,11 @@ namespace LiiteriUrbanPlanningCore.Queries
                 "FROM [{0}]..[MaanalaisetTilat] M ",
                 ConfigurationManager.AppSettings["DbKatse"]));
             sb.Append("WHERE M.Asemakaava_Id = A.Asemakaava_Id) M ");
+
+            if (this.areaWhereList.Count > 0) {
+                this.whereList.Add(String.Format("({0})",
+                    string.Join(" OR ", this.areaWhereList)));
+            }
 
             if (this.whereList.Count > 0) {
                 sb.Append("WHERE ");
