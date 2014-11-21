@@ -82,13 +82,13 @@ FROM
 
 SELECT
     'Yhteensä' AS Description,
-    SUM(MT.Pinala) AS AreaSize,
-    SUM(CAST((CASE
+    CAST(SUM(MT.Pinala) AS DECIMAL(20,4)) AS AreaSize,
+    CAST(SUM((CASE
         WHEN @TotalAreaSize > 0
-        THEN ROUND((MT.Pinala / @TotalAreaSize * 100.0), 1)
-        ELSE 0 END) AS DECIMAL(4,2))) AS AreaPercent,
+        THEN (MT.Pinala / @TotalAreaSize * 100.0)
+        ELSE 0 END)) AS DECIMAL(4,1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
-    SUM(MT.PinalaMuutos) AS AreaChange,
+    CAST(SUM(MT.PinalaMuutos) AS DECIMAL(20,4)) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
 FROM
     [{0}]..[Asemakaava] A

@@ -84,16 +84,16 @@ SELECT
     1 AS prio,
     NULL AS MainMarkId,
     'Yhteensä' AS Description,
-    ROUND(sum(AV.Pinala),4) AS AreaSize,
-    100 AS AreaPercent,
+    CAST(ROUND(sum(AV.Pinala),4) AS DECIMAL(20,4)) AS AreaSize,
+    CAST(100 AS DECIMAL(4,1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
-    (case
+    CAST((case
         when sum(AV.Pinala)=0 then null
         when sum(AV.Pinala) is null then null
         when sum(AV.Pinala)<>0 then
             ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
-    end) AS Efficiency,
-    ROUND(sum(AV.PinalaMuutos),4) AS AreaChange,
+    end) AS DECIMAL(20,2)) AS Efficiency,
+    CAST(ROUND(sum(AV.PinalaMuutos),4) AS DECIMAL(20,4)) AS AreaChange,
     ROUND(sum(AV.KerrosalaMuutos),0) AS FloorSpaceChange 
 FROM
     [{0}]..[Asemakaava] A
@@ -107,14 +107,14 @@ SELECT
     2 AS prio,
     KPL.Paaluokka_Id AS MainMarkId,
     KPL.NaytonSelite AS Description,
-    S.area AS AreaSize,
+    CAST(S.area AS DECIMAL(20,4)) AS AreaSize,
     CAST((CASE
         WHEN @TotalAreaSize > 0
         THEN ROUND((S.area / @TotalAreaSize * 100.0), 1)
-        ELSE 0 END) AS DECIMAL(4,2)) AS AreaPercent,
+        ELSE 0 END) AS DECIMAL(4,1)) AS AreaPercent,
     S.floorspace AS FloorSpace,
-    S.effectiveness AS Efficiency,
-    S.areachange AS AreaChange,
+    CAST(S.effectiveness AS DECIMAL(20,2)) AS Efficiency,
+    CAST(S.areachange AS DECIMAL(20, 4)) AS AreaChange,
     S.floorspacechange AS FloorSpaceChange
 FROM
     (SELECT
@@ -175,19 +175,19 @@ FROM
 UNION ALL
 
 SELECT
-        2 AS prio,
-	AV.Paaluokka_Id AS MainMarkId,
-	AV.Kaavamerkinta AS Description,
-	AV.Pinala AS AreaSize,
-	AV.PinalaPros AS AreaPercent,
-	AV.Kerrosala AS FloorSpace,
-	AV.Tehokkuus AS Efficiency,
-	AV.PinalaMuutos AS AreaChange,
-	AV.KerrosalaMuutos AS FloorSpaceChange
+    2 AS prio,
+    AV.Paaluokka_Id AS MainMarkId,
+    AV.Kaavamerkinta AS Description,
+    AV.Pinala AS AreaSize,
+    AV.PinalaPros AS AreaPercent,
+    AV.Kerrosala AS FloorSpace,
+    AV.Tehokkuus AS Efficiency,
+    AV.PinalaMuutos AS AreaChange,
+    AV.KerrosalaMuutos AS FloorSpaceChange
 FROM
-	[{0}]..[Asemakaava] A 
-	LEFT OUTER JOIN [{0}]..[Aluevaraus] AV ON
-		A.Asemakaava_Id = AV.Asemakaava_Id
+    [{0}]..[Asemakaava] A 
+    LEFT OUTER JOIN [{0}]..[Aluevaraus] AV ON
+        A.Asemakaava_Id = AV.Asemakaava_Id
 {1}
 ORDER BY
     prio,
