@@ -70,7 +70,7 @@ namespace LiiteriUrbanPlanningCore.Queries
         public override string GetQueryString()
         {
             string queryStringMain = @"
-DECLARE @TotalAreaSize DECIMAL
+DECLARE @TotalAreaSize FLOAT
 
 SELECT
     @TotalAreaSize = SUM(AV.Pinala)
@@ -108,10 +108,10 @@ SELECT
     KPL.Paaluokka_Id AS MainMarkId,
     KPL.NaytonSelite AS Description,
     S.area AS AreaSize,
-    (CASE
-        WHEN @TotalAreaSize  > 0
+    CAST((CASE
+        WHEN @TotalAreaSize > 0
         THEN ROUND((S.area / @TotalAreaSize * 100.0), 1)
-        ELSE 0 END) AS AreaPercent,
+        ELSE 0 END) AS DECIMAL(4,2)) AS AreaPercent,
     S.floorspace AS FloorSpace,
     S.effectiveness AS Efficiency,
     S.areachange AS AreaChange,
