@@ -50,13 +50,13 @@ namespace LiiteriUrbanPlanningCore.Queries
             string queryString = @"
 SELECT
     COUNT(A.Asemakaava_Id) AS PlanCount,
-    SUM(A.Pinala) AS PlanArea,
-    SUM(A.UusiPinala) AS PlanAreaNew,
-    SUM(A.MaanalainenPinala) AS UndergroundArea,
-    SUM(A.MuutosPinala) AS PlanAreaChange,
+    CAST(SUM(A.Pinala) AS DECIMAL(20,4)) AS PlanArea,
+    CAST(SUM(A.UusiPinala) AS DECIMAL(20,4)) AS PlanAreaNew,
+    CAST(SUM(A.MaanalainenPinala) AS DECIMAL(20,4)) AS UndergroundArea,
+    CAST(SUM(A.MuutosPinala) AS DECIMAL(20,4)) AS PlanAreaChange,
     CAST(AVG(DATEDIFF(DAY, vireillepvm, hyvpvm))/30.0 as decimal(8,1)) AS DurationAverage,
     NULL AS DurationMedian,
-    SUM(RA.Rantaviiva) AS CoastlineLength,
+    CAST(SUM(RA.Rantaviiva) AS DECIMAL(20,2)) AS CoastlineLength,
     SUM(RA.RakennusPaikkaOma) AS BuildingCountOwn,
     SUM(RA.RakennusPaikkaMuu) AS BuildingCountOther,
     SUM(RA.RakennusPaikkaOmaLoma) AS BuildingCountOwnHoliday,
