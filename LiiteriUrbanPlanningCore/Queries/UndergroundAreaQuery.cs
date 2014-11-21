@@ -70,17 +70,30 @@ namespace LiiteriUrbanPlanningCore.Queries
         public override string GetQueryString()
         {
             string queryStringMain = @"
+DECLARE @TotalAreaSize FLOAT
+
+SELECT
+    @TotalAreaSize = SUM(AV.Pinala)
+FROM
+    [LiiteriKatse]..[Asemakaava] A
+    INNER JOIN [LiiteriKatse]..[Aluevaraus] AV ON
+        A.Asemakaava_Id = AV.Asemakaava_Id
+{1}
+
 SELECT
     'Yhteensä' AS Description,
-    sum(MT.Pinala) AS AreaSize,
-    sum(MT.PinalaPros) AS AreaPercent,
-    sum(MT.Kerrosala) AS FloorSpace,
-    sum(MT.PinalaMuutos) AS AreaChange,
-    sum(MT.KerrosalaMuutos) AS FloorSpaceChange
+    SUM(MT.Pinala) AS AreaSize,
+    SUM(CAST((CASE
+        WHEN @TotalAreaSize > 0
+        THEN ROUND((MT.Pinala / @TotalAreaSize * 100.0), 1)
+        ELSE 0 END) AS DECIMAL(4,2))) AS AreaPercent,
+    SUM(MT.Kerrosala) AS FloorSpace,
+    SUM(MT.PinalaMuutos) AS AreaChange,
+    SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
 FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
-        MT.Asemakaava_Id = A.Asemakaava_Id  
+        MT.Asemakaava_Id = A.Asemakaava_Id
 {1}";
 
             string queryStringSub = @"
@@ -95,7 +108,7 @@ SELECT
 FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
-        MT.Asemakaava_Id = A.Asemakaava_Id  
+        MT.Asemakaava_Id = A.Asemakaava_Id
 {1}
 
 UNION ALL
@@ -111,7 +124,7 @@ SELECT
 FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
-        MT.Asemakaava_Id = A.Asemakaava_Id  
+        MT.Asemakaava_Id = A.Asemakaava_Id
     LEFT OUTER JOIN [{0}]..[VW_MaanalaisetKaavamerkit] VMKM ON
         VMKM.Kaavamerkinta = MT.Kaavamerkinta
 {1}
@@ -119,7 +132,7 @@ FROM
 GROUP BY
     MT.Kaavamerkinta,
     VMKM.JarjNro,
-    VMKM.Kaavamerkinta  
+    VMKM.Kaavamerkinta
 ORDER BY
     OrderNumber,
     Description
