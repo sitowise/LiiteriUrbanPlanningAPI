@@ -178,17 +178,38 @@ SELECT
     2 AS prio,
     AV.Paaluokka_Id AS MainMarkId,
     AV.Kaavamerkinta AS Description,
-    AV.Pinala AS AreaSize,
-    AV.PinalaPros AS AreaPercent,
-    AV.Kerrosala AS FloorSpace,
-    AV.Tehokkuus AS Efficiency,
-    AV.PinalaMuutos AS AreaChange,
-    AV.KerrosalaMuutos AS FloorSpaceChange
+    SUM(AV.Pinala) AS AreaSize,
+    CAST((CASE
+        WHEN MMS.AreaSize > 0
+        THEN ROUND((SUM(AV.Pinala) / MMS.AreaSize * 100.0), 1)
+        ELSE 0 END) AS DECIMAL(5,1)) AS AreaPercent,
+    SUM(AV.Kerrosala) AS FloorSpace,
+    SUM(AV.Tehokkuus) AS Efficiency,
+    SUM(AV.PinalaMuutos) AS AreaChange,
+    SUM(AV.KerrosalaMuutos) AS FloorSpaceChange
 FROM
     [{0}]..[Asemakaava] A 
     LEFT OUTER JOIN [{0}]..[Aluevaraus] AV ON
         A.Asemakaava_Id = AV.Asemakaava_Id
+    LEFT OUTER JOIN (
+        SELECT
+            AV.PaaLuokka_Id AS MainMarkId,
+            SUM(AV.Pinala) AS AreaSize
+        FROM
+            [{0}]..[Asemakaava] A
+            LEFT OUTER JOIN [{0}]..[Aluevaraus] AV ON
+                A.Asemakaava_Id = AV.Asemakaava_Id
+                {1}
+            GROUP BY
+                AV.PaaLuokka_Id
+            ) MMS ON MMS.MainMarkId = AV.PaaLuokka_Id
 {1}
+
+GROUP BY
+    AV.PaaLuokka_Id,
+    MMS.AreaSize,
+    AV.Kaavamerkinta
+
 ORDER BY
     prio,
     Description
