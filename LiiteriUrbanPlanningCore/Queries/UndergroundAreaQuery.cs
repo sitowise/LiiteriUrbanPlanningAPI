@@ -78,7 +78,8 @@ FROM
     [LiiteriKatse]..[Asemakaava] A
     INNER JOIN [LiiteriKatse]..[Aluevaraus] AV ON
         A.Asemakaava_Id = AV.Asemakaava_Id
-{1}
+WHERE
+    {1}
 
 SELECT
     'Yhteensä' AS Description,
@@ -94,40 +95,58 @@ FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
         MT.Asemakaava_Id = A.Asemakaava_Id
-{1}";
+WHERE
+    {1}";
 
             string queryStringSub = @"
+DECLARE @TotalAreaSize FLOAT
+
+SELECT
+    @TotalAreaSize = SUM(AV.Pinala)
+FROM
+    [LiiteriKatse]..[Asemakaava] A
+    INNER JOIN [LiiteriKatse]..[Aluevaraus] AV ON
+        A.Asemakaava_Id = AV.Asemakaava_Id 
+WHERE
+    {1}
+
 SELECT
     0 AS OrderNumber,
     'Yhteensä' AS Description,
-    sum(MT.Pinala) AS AreaSize,
-    sum(MT.PinalaPros) AS AreaPercent,
-    sum(MT.Kerrosala) AS FloorSpace,
-    sum(MT.PinalaMuutos) AS AreaChange,
-    sum(MT.KerrosalaMuutos) AS FloorSpaceChange
+    SUM(MT.Pinala) AS AreaSize,
+    CAST((CASE
+        WHEN @TotalAreaSize > 0
+        THEN ROUND((SUM(MT.Pinala) / @TotalAreaSize * 100.0), 1)
+        ELSE 0 END) AS DECIMAL(4,1)) AS AreaPercent,
+    SUM(MT.Kerrosala) AS FloorSpace,
+    SUM(MT.PinalaMuutos) AS AreaChange,
+    SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
 FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
         MT.Asemakaava_Id = A.Asemakaava_Id
-{1}
+WHERE
+    {1}
 
 UNION ALL
 
 SELECT
     VMKM.JarjNro AS OrderNumber,
     MT.Kaavamerkinta AS Description,
-    sum(MT.Pinala) AS AreaSize,
-    sum(MT.PinalaPros) AS AreaPercent,
-    sum(MT.Kerrosala) AS FloorSpace,
-    sum(MT.PinalaMuutos) AS AreaChange,
-    sum(MT.KerrosalaMuutos) AS FloorSpaceChange
+    SUM(MT.Pinala) AS AreaSize,
+    SUM(MT.PinalaPros) AS AreaPercent,
+    SUM(MT.Kerrosala) AS FloorSpace,
+    SUM(MT.PinalaMuutos) AS AreaChange,
+    SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
 FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
         MT.Asemakaava_Id = A.Asemakaava_Id
     LEFT OUTER JOIN [{0}]..[VW_MaanalaisetKaavamerkit] VMKM ON
         VMKM.Kaavamerkinta = MT.Kaavamerkinta
-{1}
+WHERE
+    MT.Kaavamerkinta IS NOT NULL AND
+    {1}
 
 GROUP BY
     MT.Kaavamerkinta,
@@ -145,7 +164,6 @@ ORDER BY
                     break;
                 case (int) QueryTypes.Sub:
                     queryString = queryStringSub;
-                    this.whereList.Add("MT.Kaavamerkinta IS NOT NULL");
                     break;
                 default:
                     throw new ArgumentException("QueryType not specified!");
@@ -153,7 +171,7 @@ ORDER BY
 
             string whereExpr = "";
             if (this.whereList.Count > 0) {
-                whereExpr = " WHERE " + string.Join(" AND ", whereList);
+                whereExpr = string.Join(" AND ", whereList);
             }
 
             queryString = string.Format(queryString,
