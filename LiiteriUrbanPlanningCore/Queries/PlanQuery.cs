@@ -537,10 +537,10 @@ namespace LiiteriUrbanPlanningCore.Queries
             sb.Append("H.Hyvaksyja AS DecisionMaker, ");
 
             sb.Append("A.HyvPykala AS DecisionNumber, ");
-            sb.Append("A.Pinala AS PlanArea, ");
-            sb.Append("A.MaanalainenPinala AS UndergroundArea, ");
-            sb.Append("A.UusiPinala AS PlanAreaNew, ");
-            sb.Append("A.MuutosPinala AS PlanAreaChange, ");
+            sb.Append("CAST(A.Pinala AS DECIMAL(20,4)) AS PlanArea, ");
+            sb.Append("CAST(A.MaanalainenPinala AS DECIMAL(20,4)) AS UndergroundArea, ");
+            sb.Append("CAST(A.UusiPinala AS DECIMAL(20,4)) AS PlanAreaNew, ");
+            sb.Append("CAST(A.MuutosPinala AS DECIMAL(20,4)) AS PlanAreaChange, ");
             sb.Append("R.Rantaviiva AS CoastlineLength, ");
             sb.Append("R.RakennusPaikkaOma AS BuildingCountOwn, ");
             sb.Append("R.RakennusPaikkaMuu AS BuildingCountOther, ");
