@@ -50,7 +50,8 @@ namespace LiiteriUrbanPlanningCore.Queries
             }
             set {
                 if (value == null) return;
-                this.whereList.Add("A.Nimi LIKE @NameLike");
+                this.whereList.Add(
+                    "(A.Nimi LIKE @NameLike OR A.NimiRUO LIKE @NameLike)");
                 this.AddParameter("@NameLike", value);
             }
 
@@ -521,7 +522,17 @@ namespace LiiteriUrbanPlanningCore.Queries
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT ");
 
-            sb.Append("A.Nimi AS Name, ");
+            //sb.Append("A.Nimi AS Name, ");
+            sb.Append(@"
+CASE
+    WHEN
+        A.NimiRuo IS NOT NULL AND LEN(A.NimiRuo) > 0
+    THEN
+        COALESCE(A.Nimi + ' - ', '') + COALESCE(A.NimiRuo, '')
+    ELSE
+        COALESCE(A.Nimi, '') + COALESCE(A.NimiRuo, '')
+    END AS Name,
+");
             sb.Append("A.Asemakaava_ID AS Id, ");
             sb.Append("A.Tyvi_id AS TyviId, ");
             sb.Append("A.H_Kunta_Id AS MunicipalityId, ");
@@ -574,7 +585,6 @@ namespace LiiteriUrbanPlanningCore.Queries
                 "FROM [{0}]..[MaanalaisetTilat] M ",
                 ConfigurationManager.AppSettings["DbKatse"]));
             sb.Append("WHERE M.Asemakaava_Id = A.Asemakaava_Id) M ");
-
             if (this.areaWhereList.Count > 0) {
                 this.whereList.Add(String.Format("({0})",
                     string.Join(" OR ", this.areaWhereList)));
