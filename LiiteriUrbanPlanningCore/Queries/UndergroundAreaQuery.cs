@@ -75,8 +75,8 @@ DECLARE @TotalAreaSize FLOAT
 SELECT
     @TotalAreaSize = SUM(AV.Pinala)
 FROM
-    [LiiteriKatse]..[Asemakaava] A
-    INNER JOIN [LiiteriKatse]..[Aluevaraus] AV ON
+    [{0}]..[Asemakaava] A
+    INNER JOIN [{0}]..[Aluevaraus] AV ON
         A.Asemakaava_Id = AV.Asemakaava_Id
 WHERE
     {1}
@@ -104,8 +104,8 @@ DECLARE @TotalAreaSize FLOAT
 SELECT
     @TotalAreaSize = SUM(AV.Pinala)
 FROM
-    [LiiteriKatse]..[Asemakaava] A
-    INNER JOIN [LiiteriKatse]..[Aluevaraus] AV ON
+    [{0}]..[Asemakaava] A
+    INNER JOIN [{0}]..[Aluevaraus] AV ON
         A.Asemakaava_Id = AV.Asemakaava_Id 
 WHERE
     {1}

@@ -194,7 +194,7 @@ LEFT OUTER JOIN (
         H_Kunta_Id,
         1 as authorise
     FROM
-        [LiiteriKatse]..[KuntaKonsultti]
+        [{1}]..[KuntaKonsultti]
     ) KV ON
         KV.H_Kunta_Id = H1.H_Kunta_Id
 
