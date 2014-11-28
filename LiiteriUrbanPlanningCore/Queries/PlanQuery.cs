@@ -212,15 +212,29 @@ namespace LiiteriUrbanPlanningCore.Queries
                 var expL = new List<string>();
                 if (this._PlanTypeIn.Contains(
                         (int) PlanTypes.Normal)) { // tavallinen
-                    expL.Add("(R.Asemakaava_Id IS NULL AND M.Asemakaava_Id IS NULL)");
+                    expL.Add(string.Format(@"
+A.Asemakaava_Id NOT IN (
+    SELECT
+        WKT.Asemakaava_Id
+    FROM
+        [{0}]..VW_KaavaTyyppiEiRAKtaiMT WKT
+    )",
+                    ConfigurationManager.AppSettings["DbKatse"]));
                 }
                 if (this._PlanTypeIn.Contains(
                         (int) PlanTypes.WithUndergroundAreas)) { // Maanalaista tilaa sis.
-                    expL.Add("(M.Asemakaava_Id IS NOT NULL)");
+                    expL.Add("(M.Pinala IS NOT NULL AND M.Pinala <> 0)");
                 }
                 if (this._PlanTypeIn.Contains(
                         (int) PlanTypes.BeachPlan)) { // Ranta-asemakaava
-                    expL.Add("(R.Asemakaava_Id IS NOT NULL)");
+                    expL.Add(string.Format(@"
+A.Asemakaava_Id IN (
+    SELECT
+        WRAK.Asemakaava_Id
+    FROM
+        [{0}]..VW_KaavaTyyppiRantaAsemaKaava WRAK
+    )",
+                    ConfigurationManager.AppSettings["DbKatse"]));
                 }
                 this.whereList.Add(string.Format(
                     "({0})", string.Join(" OR ", expL)));
