@@ -21,7 +21,7 @@ namespace LiiteriUrbanPlanningAPI.Controllers
     {
         [Route("people/")]
         [HttpGet]
-        public IEnumerable<Person> GetContancts(
+        public IEnumerable<Person> GetContacts(
             string search = null,
             string personType = null,
             int? ely = null,
