@@ -138,7 +138,8 @@ H1.Toimisto LIKE @SearchKeyword)
 (H2.Nimi LIKE @SearchKeyword OR
 H2.Etunimi LIKE @SearchKeyword OR
 H2.Sukunimi LIKE @SearchKeyword OR
-H2.Toimisto LIKE @SearchKeyword)
+H2.Toimisto LIKE @SearchKeyword OR
+H2.Yritystunnus LIKE @SearchKeyword)
 ");
             }
         }
