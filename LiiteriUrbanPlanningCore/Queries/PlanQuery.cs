@@ -313,6 +313,32 @@ A.Asemakaava_Id IN (
             }
         }
 
+        /* this will do = or LIKE depending on what field is targeted */
+        public string KeywordSearch
+        {
+            get {
+                return (string) this.GetParameter("@KeywordSearchIs");
+            }
+            set {
+                if (value == null) return;
+
+                var orList = new List<string>();
+
+                orList.Add("CONVERT(VARCHAR(MAX), A.Tyvi_id) = @KeywordSearchIs");
+                orList.Add("A.KuntaKaavaTunnus = @KeywordSearchIs");
+                orList.Add("A.GenKaavaTunnus = @KeywordSearchIs");
+                orList.Add("A.GenKaavaTunnus = @KeywordSearchIs");
+
+                orList.Add("A.Nimi LIKE @KeywordSearchLike");
+                orList.Add("A.NimiRUO LIKE @KeywordSearchLike");
+
+                this.whereList.Add(string.Join(" OR ", orList));
+
+                this.AddParameter("@KeywordSearchIs", value);
+                this.AddParameter("@KeywordSearchLike", "%" + value + "%");
+            }
+        }
+
         // Ely
         public int? ElyIs
         {

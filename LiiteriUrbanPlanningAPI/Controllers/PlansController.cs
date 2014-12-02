@@ -22,6 +22,7 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [Route("plans/")]
         [HttpGet]
         public IEnumerable<PlanBrief> GetPlans(
+            string keyword = null,
             string planName = null,
             int[] tyviId = null,
             string[] generatedPlanId = null,
@@ -45,6 +46,7 @@ namespace LiiteriUrbanPlanningAPI.Controllers
                 query.NameLike = "%" + planName + "%";
             }
 
+            query.KeywordSearch = keyword;
             query.GeneratedPlanIdIn = generatedPlanId;
             query.MunicipalityPlanIdIn = municipalityPlanId;
             query.ApproverIn = approver;
