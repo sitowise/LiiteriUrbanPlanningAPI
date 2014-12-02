@@ -71,7 +71,6 @@ namespace LiiteriUrbanPlanningCore.Queries
         {
             string queryStringMain = @"
 SELECT
-    1 AS prio,
     NULL AS ConservationTypeId,
     'Yhteensä' As ConservationTypeName,
     sum(RS.Lkm) AS BuildingCount,
@@ -85,31 +84,6 @@ FROM
     INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
         RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
 {1}
-
-UNION ALL
-
-SELECT
-    2 AS prio,
-    RST.RakennusSuojTyyppi_Id AS ConservationTypeId,
-    RST.RakennusSuojTyyppi As ConservationTypeName,
-    sum(RS.Lkm) AS BuildingCount,
-    sum(RS.Kerrosala) AS FloorSpace,
-    sum(RS.MuutosLkm) AS ChangeCount,
-    sum(RS.MuutosKerrosala) AS ChangeFloorSpace
-FROM
-    [{0}]..[Asemakaava] A
-    LEFT OUTER JOIN [{0}]..[RakennusSuoj] RS ON
-        RS.Asemakaava_Id = A.Asemakaava_Id
-    INNER JOIN [{0}]..[RakennusSuojTyyppi] RST ON
-        RST.RakennusSuojTyyppi_Id = RS.RakennusSuojTyyppi_Id
-{1}
-GROUP BY
-    RST.RakennusSuojTyyppi_Id,
-    RST.RakennusSuojTyyppi
-
-ORDER BY
-    prio,
-    ConservationTypeId
 ";
 
             string queryStringSub = @"
