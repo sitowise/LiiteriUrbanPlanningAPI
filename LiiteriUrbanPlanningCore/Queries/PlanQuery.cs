@@ -332,7 +332,8 @@ A.Asemakaava_Id IN (
                 orList.Add("A.Nimi LIKE @KeywordSearchLike");
                 orList.Add("A.NimiRUO LIKE @KeywordSearchLike");
 
-                this.whereList.Add(string.Join(" OR ", orList));
+                this.whereList.Add(string.Format("({0})",
+                    string.Join(" OR ", orList)));
 
                 this.AddParameter("@KeywordSearchIs", value);
                 this.AddParameter("@KeywordSearchLike", "%" + value + "%");
@@ -635,6 +636,9 @@ CASE
                 sb.Append(string.Join(" AND ", whereList));
             }
 
+            foreach (var param in this.Parameters) {
+                Debug.WriteLine("{0}: {1}", param.Key, param.Value);
+            }
             Debug.WriteLine(sb.ToString());
             return sb.ToString();
         }
