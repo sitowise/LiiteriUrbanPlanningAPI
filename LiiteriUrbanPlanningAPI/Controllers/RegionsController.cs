@@ -5,39 +5,39 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-using System.Diagnostics;
-
-using System.Data.Common;
-using System.Data.SqlClient;
-
 using System.Configuration;
+using System.ServiceModel; // WCF
 
-using LiiteriUrbanPlanningCore.Models;
-using LiiteriUrbanPlanningCore.Queries;
-using LiiteriUrbanPlanningCore.Repositories;
-using LiiteriUrbanPlanningCore.Util;
+using Core = LiiteriUrbanPlanningCore;
 
 namespace LiiteriUrbanPlanningAPI.Controllers
 {
-    public class RegionsController : ApiController
+    public class RegionsController :
+        ApiController,
+        Core.Controllers.IRegionsController
     {
-        [Route("regions/")]
-        [HttpGet]
-        public IEnumerable<RegionType> GetRegionTypes()
+        private Core.Controllers.IRegionsController GetController()
         {
-            return new List<RegionType> {
-                new RegionType() { Name = "Suuralue", TypeName = "greaterArea"  },
-                new RegionType() { Name = "Hallinto-oikeus", TypeName = "administrativeCourt"  },
-                new RegionType() { Name = "Ympäristö-ELY", TypeName = "ely"  },
-                new RegionType() { Name = "Maakunta", TypeName = "county"  },
-                new RegionType() { Name = "Seutukunta", TypeName = "subRegion"  },
-                new RegionType() { Name = "Kunta", TypeName = "municipality"  },
-            };
+            if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
+                ChannelFactory<Core.Controllers.IRegionsController> factory =
+                    new ChannelFactory<Core.Controllers.IRegionsController>(
+                        "UrbanPlanningServiceEndpoint");
+                return factory.CreateChannel();
+            } else {
+                return new Core.Controllers.RegionsController();
+            }
         }
 
-        [Route("regions/{regionType}")]
+        [Route("regions/")]
         [HttpGet]
-        public IEnumerable<Region> GetRegions(
+        public IEnumerable<Core.Models.RegionType> GetRegionTypes()
+        {
+            return this.GetController().GetRegionTypes();
+        }
+
+        [Route("regions/{regionType}/")]
+        [HttpGet]
+        public IEnumerable<Core.Models.Region> GetRegions(
             string regionType,
             int[] ely = null,
             int[] subRegion = null,
@@ -45,22 +45,13 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             int[] greaterArea = null,
             int[] administrativeCourt = null)
         {
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            RegionQuery query = new RegionQuery(regionType);
-
-            query.ElyIn = ely;
-            query.SubRegionIn = subRegion;
-            query.CountyIn = county;
-            query.GreaterAreaIn = greaterArea;
-            query.AdministrativeCourtIn = administrativeCourt;
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new RegionRepository(db);
-                return (List<Region>) repository.FindAll(query);
-            }
+            return this.GetController().GetRegions(
+                regionType,
+                ely,
+                subRegion,
+                county,
+                greaterArea,
+                administrativeCourt);
         }
     }
 }

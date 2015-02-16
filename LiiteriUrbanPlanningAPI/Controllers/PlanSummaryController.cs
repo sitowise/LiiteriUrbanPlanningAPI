@@ -5,16 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Configuration;
+using System.ServiceModel; // WCF
 
-using System.Diagnostics;
-
-using LiiteriUrbanPlanningCore.Models;
-using LiiteriUrbanPlanningCore.Queries;
-using LiiteriUrbanPlanningCore.Repositories;
-using LiiteriUrbanPlanningCore.Util;
+using Core = LiiteriUrbanPlanningCore;
 
 namespace LiiteriUrbanPlanningAPI.Controllers
 {
@@ -26,12 +20,26 @@ namespace LiiteriUrbanPlanningAPI.Controllers
     }
 
     [RoutePrefix("plansummary")]
-    public class PlanSummaryController : ApiController
+    public class PlanSummaryController :
+        ApiController,
+        Core.Controllers.IPlanSummaryController
     {
+        private Core.Controllers.IPlanSummaryController GetController()
+        {
+            if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
+                ChannelFactory<Core.Controllers.IPlanSummaryController> factory =
+                    new ChannelFactory<Core.Controllers.IPlanSummaryController>(
+                        "UrbanPlanningServiceEndpoint");
+                return factory.CreateChannel();
+            } else {
+                return new Core.Controllers.PlanSummaryController();
+            }
+        }
+
         [Route("", Order = 2)]
         [HttpPost]
         /* Support POST here since we can receive a large number of Ids */
-        public PlanSummary GetPlanSummary(
+        public Core.Models.PlanSummary GetPlanSummary(
             [FromBody] PlanSummaryRequest reqobj)
         {
             return this.GetPlanSummary(reqobj.PlanIds);
@@ -40,26 +48,16 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [Route("", Order = 2)]
         [Route("{planIds}/", Order = 2)]
         [HttpGet]
-        public PlanSummary GetPlanSummary(
+        public Core.Models.PlanSummary GetPlanSummary(
             int[] planIds) // int[] conversion done by IntegerArrayModelBinder
         {
-            PlanSummaryQuery query = new PlanSummaryQuery();
-            query.PlanIdIn = planIds;
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new PlanSummaryRepository(db);
-                return (PlanSummary) repository.Single(query);
-            }
+            return this.GetController().GetPlanSummary(planIds);
         }
 
         [Route("areaReservations/{type}/", Order = 1)]
         [HttpPost]
         /* Support POST here since we can receive a large number of Ids */
-        public IEnumerable<AreaReservation> GetPlanSummaryAreaReservations(
+        public IEnumerable<Core.Models.AreaReservation> GetPlanSummaryAreaReservations(
             [FromBody] PlanSummaryRequest reqobj,
             string type)
         {
@@ -71,38 +69,17 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [Route("{planIds}/areaReservations/{type}/", Order = 1)]
         [Route("areaReservations/{type}/{planIds}/", Order = 1)]
         [HttpGet]
-        public IEnumerable<AreaReservation> GetPlanSummaryAreaReservations(
+        public IEnumerable<Core.Models.AreaReservation> GetPlanSummaryAreaReservations(
             int[] planIds,
             string type)
         {
-            AreaReservationQuery query = new AreaReservationQuery();
-            query.PlanIdIn = planIds;
-
-            switch (type) {
-                case "main":
-                    query.QueryType = (int) AreaReservationQuery.QueryTypes.Main;
-                    break;
-                case "sub":
-                    query.QueryType = (int) AreaReservationQuery.QueryTypes.Sub;
-                    break;
-                default:
-                    throw new ArgumentException("QueryType not specified!");
-            }
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new AreaReservationRepository(db);
-                return (List<AreaReservation>) repository.FindAll(query);
-            }
+            return this.GetPlanSummaryAreaReservations(planIds, type);
         }
 
         [Route("undergroundAreas/{type}/", Order = 1)]
         [HttpPost]
         /* Support POST here since we can receive a large number of Ids */
-        public IEnumerable<UndergroundArea> GetUndergroundAreas(
+        public IEnumerable<Core.Models.UndergroundArea> GetUndergroundAreas(
             [FromBody] PlanSummaryRequest reqobj,
             string type)
         {
@@ -114,38 +91,17 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [Route("{planIds}/undergroundAreas/{type}/", Order = 1)]
         [Route("undergroundAreas/{type}/{planIds}/", Order = 1)]
         [HttpGet]
-        public IEnumerable<UndergroundArea> GetUndergroundAreas(
+        public IEnumerable<Core.Models.UndergroundArea> GetUndergroundAreas(
             int[] planIds,
             string type)
         {
-            UndergroundAreaQuery query = new UndergroundAreaQuery();
-            query.PlanIdIn = planIds;
-
-            switch (type) {
-                case "main":
-                    query.QueryType = (int) UndergroundAreaQuery.QueryTypes.Main;
-                    break;
-                case "sub":
-                    query.QueryType = (int) UndergroundAreaQuery.QueryTypes.Sub;
-                    break;
-                default:
-                    throw new ArgumentException("QueryType not specified!");
-            }
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new UndergroundAreaRepository(db);
-                return (List<UndergroundArea>) repository.FindAll(query);
-            }
+            return this.GetController().GetUndergroundAreas(planIds, type);
         }
 
         [Route("buildingConservations/{type}/", Order = 1)]
         [HttpPost]
         /* Support POST here since we can receive a large number of Ids */
-        public IEnumerable<BuildingConservation> GetBuildingConservations(
+        public IEnumerable<Core.Models.BuildingConservation> GetBuildingConservations(
             [FromBody] PlanSummaryRequest reqobj,
             string type)
         {
@@ -157,32 +113,11 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [Route("{planIds}/buildingConservations/{type}/", Order = 1)]
         [Route("buildingConservations/{type}/{planIds}/", Order = 1)]
         [HttpGet]
-        public IEnumerable<BuildingConservation> GetBuildingConservations(
+        public IEnumerable<Core.Models.BuildingConservation> GetBuildingConservations(
             int[] planIds,
             string type)
         {
-            BuildingConservationQuery query = new BuildingConservationQuery();
-            query.PlanIdIn = planIds;
-
-            switch (type) {
-                case "main":
-                    query.QueryType = (int) BuildingConservationQuery.QueryTypes.Main;
-                    break;
-                case "sub":
-                    query.QueryType = (int) BuildingConservationQuery.QueryTypes.Sub;
-                    break;
-                default:
-                    throw new ArgumentException("QueryType not specified!");
-            }
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new BuildingConservationRepository(db);
-                return (List<BuildingConservation>) repository.FindAll(query);
-            }
+            return this.GetController().GetBuildingConservations(planIds, type);
         }
     }
 }

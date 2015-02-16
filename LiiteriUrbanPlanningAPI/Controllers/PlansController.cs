@@ -8,20 +8,31 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Configuration;
 
-using System.Diagnostics;
+using System.ServiceModel; // WCF
 
-using LiiteriUrbanPlanningCore.Models;
-using LiiteriUrbanPlanningCore.Queries;
-using LiiteriUrbanPlanningCore.Repositories;
-using LiiteriUrbanPlanningCore.Util;
+using Core = LiiteriUrbanPlanningCore;
 
 namespace LiiteriUrbanPlanningAPI.Controllers
 {
-    public class PlansController : ApiController
+    public class PlansController :
+        ApiController,
+        Core.Controllers.IPlansController
     {
+        private Core.Controllers.IPlansController GetController()
+        {
+            if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
+                ChannelFactory<Core.Controllers.IPlansController> factory =
+                    new ChannelFactory<Core.Controllers.IPlansController>(
+                        "UrbanPlanningServiceEndpoint");
+                return factory.CreateChannel();
+            } else {
+                return new Core.Controllers.PlansController();
+            }
+        }
+
         [Route("plans/")]
         [HttpGet]
-        public IEnumerable<PlanBrief> GetPlans(
+        public IEnumerable<Core.Models.PlanBrief> GetPlans(
             string keyword = null,
             string planName = null,
             int[] tyviId = null,
@@ -29,10 +40,10 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             string[] municipalityPlanId = null,
             string[] approver = null,
             string planType = null,
-            DateRange approvalDateWithin = null,
-            DateRange proposalDateWithin = null,
-            DateRange initialDateWithin = null,
-            DateRange fillDateWithin = null,
+            Core.Util.DateRange approvalDateWithin = null,
+            Core.Util.DateRange proposalDateWithin = null,
+            Core.Util.DateRange initialDateWithin = null,
+            Core.Util.DateRange fillDateWithin = null,
             int[] ely = null,
             int[] subRegion = null,
             int[] county = null,
@@ -40,152 +51,55 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             int[] administrativeCourt = null,
             int[] municipality = null)
         {
-            PlanQuery query = new PlanQuery();
-
-            if (planName != null) {
-                query.NameLike = "%" + planName + "%";
-            }
-
-            query.KeywordSearch = keyword;
-            query.GeneratedPlanIdIn = generatedPlanId;
-            query.MunicipalityPlanIdIn = municipalityPlanId;
-            query.ApproverIn = approver;
-            query.TyviIdIn = tyviId;
-
-            if (planType != null) {
-                query.PlanTypeIn = planType.Split(',').ToList().ConvertAll(
-                    x => (new Dictionary<string, int>(){
-                        {"T", (int) PlanQuery.PlanTypes.Normal},
-                        {"R", (int) PlanQuery.PlanTypes.BeachPlan},
-                        {"M", (int) PlanQuery.PlanTypes.WithUndergroundAreas},
-                        {"tavallinen", (int) PlanQuery.PlanTypes.Normal},
-                        {"rantaasemakaava", (int) PlanQuery.PlanTypes.BeachPlan},
-                        {"maanalaistasisaltava", (int) PlanQuery.PlanTypes.WithUndergroundAreas},
-                    })[x]).ToArray();
-            }
-
-            query.ApprovalDateWithin = approvalDateWithin;
-            query.ProposalDateWithin = proposalDateWithin;
-            query.InitialDateWithin = initialDateWithin;
-            query.FillDateWithin = fillDateWithin;
-
-            query.ElyIn = ely;
-            query.SubRegionIn = subRegion;
-            query.CountyIn = county;
-            query.GreaterAreaIn = greaterArea;
-            query.AdministrativeCourtIn = administrativeCourt;
-            query.MunicipalityIn = municipality;
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new PlanBriefRepository(db);
-                return (List<PlanBrief>) repository.FindAll(query);
-            }
+            return this.GetController().GetPlans(
+                keyword,
+                planName,
+                tyviId,
+                generatedPlanId,
+                municipalityPlanId,
+                approver,
+                planType,
+                approvalDateWithin,
+                proposalDateWithin,
+                initialDateWithin,
+                fillDateWithin,
+                ely,
+                subRegion,
+                county,
+                greaterArea,
+                administrativeCourt,
+                municipality);
         }
 
         [Route("plans/{id}")]
         [HttpGet]
-        public Plan GetPlan(int id)
+        public Core.Models.Plan GetPlan(int id)
         {
-            PlanQuery query = new PlanQuery();
-
-            query.IdIs = id;
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new PlanRepository(db);
-                return (Plan) repository.Single(query);
-            }
+            return this.GetController().GetPlan(id);
         }
 
-        [Route("plans/{id}/areaReservations/{type}")]
+        [Route("plans/{id}/areaReservations/{type}/")]
         [HttpGet]
-        public IEnumerable<AreaReservation> GetAreaReservations(
+        public IEnumerable<Core.Models.AreaReservation> GetAreaReservations(
             int id, string type)
         {
-            AreaReservationQuery query = new AreaReservationQuery(id);
-
-            switch (type) {
-                case "main":
-                    query.QueryType = (int) AreaReservationQuery.QueryTypes.Main;
-                    break;
-                case "sub":
-                    query.QueryType = (int) AreaReservationQuery.QueryTypes.Sub;
-                    break;
-                default:
-                    throw new ArgumentException("QueryType not specified!");
-            }
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new AreaReservationRepository(db);
-                return (List<AreaReservation>) repository.FindAll(query);
-            }
+            return this.GetController().GetAreaReservations(id, type);
         }
 
-        [Route("plans/{id}/undergroundAreas/{type}")]
+        [Route("plans/{id}/undergroundAreas/{type}/")]
         [HttpGet]
-        public IEnumerable<UndergroundArea> GetUndergroundAreas(
+        public IEnumerable<Core.Models.UndergroundArea> GetUndergroundAreas(
             int id, string type)
         {
-            UndergroundAreaQuery query = new UndergroundAreaQuery(id);
-
-            switch (type) {
-                case "main":
-                    query.QueryType = (int) UndergroundAreaQuery.QueryTypes.Main;
-                    break;
-                case "sub":
-                    query.QueryType = (int) UndergroundAreaQuery.QueryTypes.Sub;
-                    break;
-                default:
-                    throw new ArgumentException("QueryType not specified!");
-            }
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new UndergroundAreaRepository(db);
-                return (List<UndergroundArea>) repository.FindAll(query);
-            }
+            return this.GetController().GetUndergroundAreas(id, type);
         }
 
-        [Route("plans/{id}/buildingConservations/{type}")]
+        [Route("plans/{id}/buildingConservations/{type}/")]
         [HttpGet]
-        public IEnumerable<BuildingConservation> GetBuildingConservations(
+        public IEnumerable<Core.Models.BuildingConservation> GetBuildingConservations(
             int id, string type)
         {
-            BuildingConservationQuery query = new BuildingConservationQuery(id);
-
-            switch (type) {
-                case "main":
-                    query.QueryType = (int) BuildingConservationQuery.QueryTypes.Main;
-                    break;
-                case "sub":
-                    query.QueryType = (int) BuildingConservationQuery.QueryTypes.Sub;
-                    break;
-                default:
-                    throw new ArgumentException("QueryType not specified!");
-            }
-
-            string connStr =
-                ConfigurationManager.ConnectionStrings["urbanPlanningDB"].ToString();
-
-            using (DbConnection db = new SqlConnection(connStr)) {
-                db.Open();
-                var repository = new BuildingConservationRepository(db);
-                return (List<BuildingConservation>) repository.FindAll(query);
-            }
+            return this.GetController().GetBuildingConservations(id, type);
         }
     }
 }

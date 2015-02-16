@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Runtime.Serialization;
 
 namespace LiiteriUrbanPlanningCore.Util
 {
@@ -16,6 +17,9 @@ namespace LiiteriUrbanPlanningCore.Util
         bool Includes(IRange<T> range);
     }
 
+    /* This class needs to be serialized when passing it via WCF, hence
+     * it has the DataContract / DataMember attributes */
+    [DataContract]
     public class DateRange : IRange<DateTime>
     {
         public DateRange(DateTime start, DateTime end)
@@ -24,7 +28,10 @@ namespace LiiteriUrbanPlanningCore.Util
             End = end;
         }
 
+        [DataMember]
         public DateTime Start { get; private set; }
+
+        [DataMember]
         public DateTime End { get; private set; }
 
         public bool Includes(DateTime value)
