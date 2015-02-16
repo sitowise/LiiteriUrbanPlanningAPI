@@ -5,9 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-using System.Diagnostics;
-using System.Reflection;
-using System.IO;
+using System.Configuration;
+using System.ServiceModel; // WCF
+
+using Core = LiiteriUrbanPlanningCore;
 
 namespace LiiteriUrbanPlanningAPI.Controllers
 {
@@ -16,19 +17,24 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         [Route("version/")]
         [Route("v1/version/")]
         [HttpGet]
-        public HttpResponseMessage GetVersion()
+        public IEnumerable<Core.Models.ApplicationVersion> GetVersion()
         {
-            Assembly asm = Assembly.GetExecutingAssembly();
+            var versions = new List<Core.Models.ApplicationVersion>();
+            Core.Controllers.IVersionController controller;
 
-            // AssemblyVersion
-            //return asm.GetName().Version.ToString();
+            controller = new Core.Controllers.VersionController();
 
-            // AssemblyFileVersion
-            FileVersionInfo fv = FileVersionInfo.GetVersionInfo(asm.Location);
-            return Request.CreateResponse(
-                HttpStatusCode.OK,
-                fv.FileVersion.ToString(),
-                new Formatters.TextPlainFormatter());
+            versions.AddRange(controller.GetVersion());
+
+            if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
+                ChannelFactory<Core.Controllers.IVersionController> factory =
+                    new ChannelFactory<Core.Controllers.IVersionController>(
+                        "UrbanPlanningServiceEndpoint");
+                controller = factory.CreateChannel();
+                versions.AddRange(controller.GetVersion());
+            }
+
+            return versions;
         }
     }
 }

@@ -50,6 +50,7 @@
     <Compile Include="Controllers\PlansController.cs" />
     <Compile Include="Controllers\PlanSummaryController.cs" />
     <Compile Include="Controllers\RegionsController.cs" />
+    <Compile Include="Controllers\VersionController.cs" />
     <Compile Include="Factories\AreaReservationFactory.cs" />
     <Compile Include="Factories\BaseFactory.cs" />
     <Compile Include="Factories\BuildingConservationFactory.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Factories\PlanSummaryFactory.cs" />
     <Compile Include="Factories\RegionFactory.cs" />
     <Compile Include="Factories\UndergroundAreaFactory.cs" />
+    <Compile Include="Models\ApplicationVersion.cs" />
     <Compile Include="Models\AreaReservation.cs" />
     <Compile Include="Models\BuildingConservation.cs" />
     <Compile Include="Models\IEntity.cs" />

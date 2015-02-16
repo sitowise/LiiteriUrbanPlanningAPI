@@ -64,10 +64,14 @@
     <Content Include="PlansService.svc" />
     <Content Include="PlanSummaryService.svc" />
     <Content Include="RegionsService.svc" />
+    <Content Include="VersionService.svc" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VersionService.svc.cs">
+      <DependentUpon>VersionService.svc</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
