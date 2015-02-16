@@ -12,18 +12,16 @@ using Core = LiiteriUrbanPlanningCore;
 
 namespace LiiteriUrbanPlanningAPI.Controllers
 {
-    /* The serialization of class will be used as the POST data when
-     * providing a list of planIds for the various methods below */
-    public class PlanSummaryRequest
-    {
-        public int[] PlanIds { get; set; }
-    }
-
     [RoutePrefix("plansummary")]
     public class PlanSummaryController :
         ApiController,
         Core.Controllers.IPlanSummaryController
     {
+        public class PlanSummaryRequest
+        {
+            public int[] PlanIds { get; set; }
+        }
+
         private Core.Controllers.IPlanSummaryController GetController()
         {
             if (ConfigurationManager.AppSettings["UseWCF"] == "true") {
