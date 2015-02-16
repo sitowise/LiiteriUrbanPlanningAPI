@@ -327,7 +327,6 @@ A.Asemakaava_Id IN (
                 orList.Add("CONVERT(VARCHAR(MAX), A.Tyvi_id) = @KeywordSearchIs");
                 orList.Add("A.KuntaKaavaTunnus = @KeywordSearchIs");
                 orList.Add("A.GenKaavaTunnus = @KeywordSearchIs");
-                orList.Add("A.GenKaavaTunnus = @KeywordSearchIs");
 
                 orList.Add("A.Nimi LIKE @KeywordSearchLike");
                 orList.Add("A.NimiRUO LIKE @KeywordSearchLike");
