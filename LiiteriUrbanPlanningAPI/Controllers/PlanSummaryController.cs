@@ -40,7 +40,7 @@ namespace LiiteriUrbanPlanningAPI.Controllers
         public Core.Models.PlanSummary GetPlanSummary(
             [FromBody] PlanSummaryRequest reqobj)
         {
-            return this.GetPlanSummary(reqobj.PlanIds);
+            return this.GetController().GetPlanSummary(reqobj.PlanIds);
         }
 
         [Route("", Order = 2)]
@@ -59,7 +59,8 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             [FromBody] PlanSummaryRequest reqobj,
             string type)
         {
-            return this.GetPlanSummaryAreaReservations(reqobj.PlanIds, type);
+            return this.GetController().GetPlanSummaryAreaReservations(
+                reqobj.PlanIds, type);
         }
 
         [Route("areaReservations/", Order = 1)]
@@ -71,7 +72,8 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             int[] planIds,
             string type)
         {
-            return this.GetPlanSummaryAreaReservations(planIds, type);
+            return this.GetController().GetPlanSummaryAreaReservations(
+                planIds, type);
         }
 
         [Route("undergroundAreas/{type}/", Order = 1)]
@@ -81,7 +83,8 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             [FromBody] PlanSummaryRequest reqobj,
             string type)
         {
-            return this.GetUndergroundAreas(reqobj.PlanIds, type);
+            return this.GetController().GetUndergroundAreas(
+                reqobj.PlanIds, type);
         }
 
         [Route("undergroundAreas/", Order = 1)]
@@ -103,7 +106,8 @@ namespace LiiteriUrbanPlanningAPI.Controllers
             [FromBody] PlanSummaryRequest reqobj,
             string type)
         {
-            return this.GetBuildingConservations(reqobj.PlanIds, type);
+            return this.GetController().GetBuildingConservations(
+                reqobj.PlanIds, type);
         }
 
         [Route("buildingConservations/", Order = 1)]
