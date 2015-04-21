@@ -20,6 +20,9 @@ namespace LiiteriUrbanPlanningCore.Factories
             marking.Name = (string) this.GetValueOrNull(rdr, "Name").ToString();
             marking.Description = (string) this.GetValueOrNull(rdr, "Description");
 
+            marking.OrderNumber = Convert.ToInt32(rdr["OrderNumber"]);
+            //marking.OrderNumber = (int?) ((short) this.GetValueOrNull(rdr, "OrderNumber"));
+
             return marking;
         }
     }

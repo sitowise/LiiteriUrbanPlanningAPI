@@ -78,7 +78,8 @@ SELECT
 	KPL.PaaLuokka_Id AS MainMarkId,
 	KPL.PaaLuokka AS MainMarkName,
 	KM.Kaavamerkinta AS Name,
-	KM.Selite AS Description
+	KM.Selite AS Description,
+	KM.JarjNro AS OrderNumber
 FROM
 	[{0}]..[AsetusKaavaMerkinta] KM
 	INNER JOIN [{0}]..[KaavaPaaLuokka] KPL ON
@@ -94,7 +95,8 @@ SELECT
 	KPL.PaaLuokka_Id AS MainMarkId,
 	KPL.PaaLuokka AS MainMarkName,
 	KM.Kaavamerkinta AS Name,
-	KM.Selite AS Description
+	KM.Selite AS Description,
+	0 AS OrderNumber
 FROM
 	[{0}]..[KuntaKaavaMerkinta] KM
 	INNER JOIN [{0}]..[KaavaPaaLuokka] KPL ON
@@ -112,7 +114,8 @@ SELECT
 	NULL AS MainMarkId,
 	NULL AS MainMarkName,
 	KM.Kaavamerkinta AS Name,
-	KM.Selite AS Description
+	KM.Selite AS Description,
+	KM.JarjNro AS OrderNumber
 FROM
 	[{0}]..[MaanalaisetKaavaMerkinta] KM
 {2}
@@ -126,7 +129,9 @@ SELECT
 	NULL AS MainMarkId,
 	NULL AS MainMarkName,
 	KM.Kaavamerkinta AS Name,
-	KM.Selite AS Description
+	KM.Selite AS Description,
+	0 AS OrderNumber
+
 FROM
 	[{0}]..[MaanalaisetKuntaKaavaMerkinta] KM
 	INNER JOIN [{1}]..[Kunta] K ON
@@ -166,6 +171,9 @@ ORDER BY
                 ConfigurationManager.AppSettings["DbHakemisto"],
                 whereString);
 
+            foreach (var param in this.Parameters) {
+                Debug.WriteLine("{0}: {1}", param.Key, param.Value);
+            }
             Debug.WriteLine(queryString);
             return queryString;
         }
