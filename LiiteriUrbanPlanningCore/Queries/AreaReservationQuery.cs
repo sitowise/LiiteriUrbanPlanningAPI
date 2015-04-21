@@ -180,9 +180,9 @@ SELECT
     AV.Kaavamerkinta AS Description,
     SUM(AV.Pinala) AS AreaSize,
     CAST((CASE
-        WHEN MMS.AreaSize > 0
+        WHEN MMS.AreaSize IS NOT NULL
         THEN ROUND((SUM(AV.Pinala) / MMS.AreaSize * 100.0), 1)
-        ELSE 0 END) AS DECIMAL(5,1)) AS AreaPercent,
+        ELSE NULL END) AS DECIMAL(5,1)) AS AreaPercent,
     SUM(AV.Kerrosala) AS FloorSpace,
     SUM(AV.Tehokkuus) AS Efficiency,
     SUM(AV.PinalaMuutos) AS AreaChange,
@@ -199,10 +199,10 @@ FROM
             [{0}]..[Asemakaava] A
             LEFT OUTER JOIN [{0}]..[Aluevaraus] AV ON
                 A.Asemakaava_Id = AV.Asemakaava_Id
-                {1}
-            GROUP BY
-                AV.PaaLuokka_Id
-            ) MMS ON MMS.MainMarkId = AV.PaaLuokka_Id
+        {1}
+        GROUP BY
+            AV.PaaLuokka_Id
+        ) MMS ON MMS.MainMarkId = AV.PaaLuokka_Id
 {1}
 
 GROUP BY
