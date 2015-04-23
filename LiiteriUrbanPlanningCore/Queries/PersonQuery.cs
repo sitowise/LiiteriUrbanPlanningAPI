@@ -28,8 +28,8 @@ namespace LiiteriUrbanPlanningCore.Queries
             set
             {
                 if (value == null) return;
-                this.whereListContacts.Add("K1.Ely_Id = @ElyIs");
-                this.whereListConsults.Add("K2.Ely_Id = @ElyIs");
+                this.whereListContacts.Add("K1.YmpVastuuEly_Id = @ElyIs");
+                this.whereListConsults.Add("K2.YmpVastuuEly_Id = @ElyIs");
                 this.AddParameter("@ElyIs", (int) value);
             }
         }
