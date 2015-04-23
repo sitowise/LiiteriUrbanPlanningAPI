@@ -70,24 +70,18 @@ namespace LiiteriUrbanPlanningCore.Queries
         public override string GetQueryString()
         {
             string queryStringMain = @"
-DECLARE @TotalAreaSize FLOAT
-
+DECLARE @TotalAreaSizeMTPercent FLOAT
 SELECT
-    @TotalAreaSize = SUM(AV.Pinala)
+    @TotalAreaSizeMTPercent = 100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
 FROM
     [{0}]..[Asemakaava] A
-    INNER JOIN [{0}]..[Aluevaraus] AV ON
-        A.Asemakaava_Id = AV.Asemakaava_Id
 WHERE
     {1}
 
 SELECT
     'Yhteensä' AS Description,
     CAST(SUM(MT.Pinala) AS DECIMAL(20,4)) AS AreaSize,
-    CAST(SUM((CASE
-        WHEN @TotalAreaSize > 0
-        THEN (MT.Pinala / @TotalAreaSize * 100.0)
-        ELSE 0 END)) AS DECIMAL(4,1)) AS AreaPercent,
+    CAST(ROUND(@TotalAreaSizeMTPercent, 1) AS DECIMAL(4, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
     CAST(SUM(MT.PinalaMuutos) AS DECIMAL(20,4)) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
@@ -99,14 +93,21 @@ WHERE
     {1}";
 
             string queryStringSub = @"
-DECLARE @TotalAreaSize FLOAT
-
+DECLARE @TotalAreaSizeMTSummed FLOAT
 SELECT
-    @TotalAreaSize = SUM(AV.Pinala)
+    @TotalAreaSizeMTSummed = SUM(MT.Pinala)
 FROM
     [{0}]..[Asemakaava] A
-    INNER JOIN [{0}]..[Aluevaraus] AV ON
-        A.Asemakaava_Id = AV.Asemakaava_Id 
+    INNER JOIN [{0}]..[MaanalaisetTilat] MT ON
+        MT.Asemakaava_Id = A.Asemakaava_Id
+WHERE
+    {1}
+
+DECLARE @TotalAreaSizeMTPercent FLOAT
+SELECT
+    @TotalAreaSizeMTPercent = 100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
+FROM
+    [{0}]..[Asemakaava] A
 WHERE
     {1}
 
@@ -114,10 +115,7 @@ SELECT
     0 AS OrderNumber,
     'Yhteensä' AS Description,
     SUM(MT.Pinala) AS AreaSize,
-    CAST((CASE
-        WHEN @TotalAreaSize > 0
-        THEN ROUND((SUM(MT.Pinala) / @TotalAreaSize * 100.0), 1)
-        ELSE 0 END) AS DECIMAL(4,1)) AS AreaPercent,
+    CAST(ROUND(@TotalAreaSizeMTPercent, 1) AS DECIMAL(4, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
     SUM(MT.PinalaMuutos) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
@@ -134,7 +132,7 @@ SELECT
     VMKM.JarjNro AS OrderNumber,
     MT.Kaavamerkinta AS Description,
     SUM(MT.Pinala) AS AreaSize,
-    SUM(MT.PinalaPros) AS AreaPercent,
+    CAST(ROUND((100 / @TotalAreaSizeMTSummed * SUM(MT.Pinala)), 1) AS DECIMAL(4, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
     SUM(MT.PinalaMuutos) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
