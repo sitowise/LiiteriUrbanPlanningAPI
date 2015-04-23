@@ -90,22 +90,22 @@ ORDER BY
 ";
             string queryStringAreaReservationsMunicipality = @"
 SELECT
-	KM.H_Kunta_Id AS MunicipalityId,
-	K.Nimi AS MunicipalityName,
-	KPL.PaaLuokka_Id AS MainMarkId,
-	KPL.PaaLuokka AS MainMarkName,
-	KM.Kaavamerkinta AS Name,
-	KM.Selite AS Description,
-	0 AS OrderNumber
+    KM.H_Kunta_Id AS MunicipalityId,
+    K.Nimi AS MunicipalityName,
+    KM.PaaLuokka_Id AS MainMarkId,
+    KM.Paaluokka AS MainMarkName,
+    KM.Kaavamerkinta AS Name,
+    KM.Selite AS Description,
+    0 AS OrderNumber
 FROM
-	[{0}]..[KuntaKaavaMerkinta] KM
-	INNER JOIN [{0}]..[KaavaPaaLuokka] KPL ON
-		KM.PaaLuokka_Id = KPL.PaaLuokka_Id
-	INNER JOIN [{1}]..[Kunta] K ON
-		KM.H_Kunta_Id = K.Kunta_Id
+    [{0}]..[VW_TyviAKMerkinta] KM
+    INNER JOIN [{0}]..[KaavaPaaLuokka] KPL ON
+        KM.PaaLuokka_Id = KPL.PaaLuokka_Id
+    INNER JOIN [{1}]..[Kunta] K ON
+        KM.H_Kunta_Id = K.Kunta_Id
 {2}
 ORDER BY
-	KM.Kaavamerkinta
+    KM.Kaavamerkinta
 ";
             string queryStringUndergroundStandard = @"
 SELECT
@@ -124,21 +124,20 @@ ORDER BY
 ";
             string queryStringUndergroundMunicipality = @"
 SELECT
-	KM.H_Kunta_Id AS MunicipalityId,
-	K.Nimi AS MunicipalityName,
-	NULL AS MainMarkId,
-	NULL AS MainMarkName,
-	KM.Kaavamerkinta AS Name,
-	KM.Selite AS Description,
-	0 AS OrderNumber
-
+    KM.H_Kunta_Id AS MunicipalityId,
+    K.Nimi AS MunicipalityName,
+    NULL AS MainMarkId,
+    NULL AS MainMarkName,
+    KM.Kaavamerkinta AS Name,
+    KM.Selite AS Description,
+    0 AS OrderNumber
 FROM
-	[{0}]..[MaanalaisetKuntaKaavaMerkinta] KM
-	INNER JOIN [{1}]..[Kunta] K ON
-		KM.H_Kunta_Id = K.Kunta_Id
+    [{0}]..[VW_TyviAKMaanalainenMerkinta] KM
+    INNER JOIN [{1}]..[Kunta] K ON
+        KM.H_Kunta_Id = K.Kunta_Id
 {2}
 ORDER BY
-	KM.Kaavamerkinta
+    KM.Kaavamerkinta
 ";
 
             string queryString;
