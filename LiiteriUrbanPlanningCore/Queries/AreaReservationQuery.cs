@@ -184,7 +184,7 @@ SELECT
     AV.Kaavamerkinta AS Description,
     SUM(AV.Pinala) AS AreaSize,
     CAST((CASE
-        WHEN MMS.AreaSize IS NOT NULL
+        WHEN MMS.AreaSize IS NOT NULL AND MMS.AreaSize > 0
         THEN ROUND((SUM(AV.Pinala) / MMS.AreaSize * 100.0), 1)
         ELSE NULL END) AS DECIMAL(5,1)) AS AreaPercent,
     SUM(AV.Kerrosala) AS FloorSpace,
