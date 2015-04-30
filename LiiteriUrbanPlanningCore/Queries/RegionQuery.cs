@@ -215,21 +215,24 @@ namespace LiiteriUrbanPlanningCore.Queries
                 case "greaterArea": // Suuralue
                     sb.Append("T.Suuralue_Id AS regionId, ");
                     sb.Append("T.Selite AS name, ");
-                    sb.Append("'greaterArea' AS regionType ");
+                    sb.Append("'greaterArea' AS regionType, ");
+                    sb.Append("NULL AS orderNumber ");
                     sb.Append(string.Format(
                         "FROM [{0}].[dbo].[Suuralue] T ", dbName));
                     break;
                 case "administrativeCourt": // Hallinto-oikeus
                     sb.Append("T.HallintoOikeus_Id AS regionId, ");
                     sb.Append("T.Nimi AS name, ");
-                    sb.Append("'administrativeCourt' AS regionType ");
+                    sb.Append("'administrativeCourt' AS regionType, ");
+                    sb.Append("NULL AS orderNumber ");
                     sb.Append(string.Format(
                         "FROM [{0}].[dbo].[HallintoOikeus] T ", dbName));
                     break;
                 case "ely": // Ely
                     sb.Append("T.YmpVastuuEly_Id AS regionId, ");
                     sb.Append("T.YmparistoElyNimi AS name, ");
-                    sb.Append("'ely' AS regionType ");
+                    sb.Append("'ely' AS regionType, ");
+                    sb.Append("JarjNro AS orderNumber ");
                     sb.Append(string.Format(
                         "FROM [{0}].[dbo].[Ely] T ", dbName));
                     this.whereList.Add("YmparistoEly = 1");
@@ -239,7 +242,8 @@ namespace LiiteriUrbanPlanningCore.Queries
                     // Suuralue, Ely, HallintoOikeus
                     sb.Append("T.Maakunta_Id AS regionId, ");
                     sb.Append("T.Nimi AS name, ");
-                    sb.Append("'county' AS regionType ");
+                    sb.Append("'county' AS regionType, ");
+                    sb.Append("JarjNro AS orderNumber ");
                     sb.Append(string.Format(
                         "FROM [{0}].[dbo].[Maakunta] T ", dbName));
                     break;
@@ -248,7 +252,8 @@ namespace LiiteriUrbanPlanningCore.Queries
                     // Maakunta
                     sb.Append("T.Seutukunta_Id AS regionId, ");
                     sb.Append("T.Nimi AS name, ");
-                    sb.Append("'subRegion' AS regionType ");
+                    sb.Append("'subRegion' AS regionType, ");
+                    sb.Append("NULL AS orderNumber ");
                     sb.Append(string.Format(
                         "FROM [{0}].[dbo].[Seutukunta] T ", dbName));
                     break;
@@ -258,7 +263,8 @@ namespace LiiteriUrbanPlanningCore.Queries
                     // ehkä muutakin
                     sb.Append("T.Kunta_Id AS regionId, ");
                     sb.Append("T.Nimi AS name, ");
-                    sb.Append("'subRegion' AS regionType ");
+                    sb.Append("'subRegion' AS regionType, ");
+                    sb.Append("NULL AS orderNumber ");
                     sb.Append(string.Format(
                         "FROM [{0}].[dbo].[Kunta] T ", dbName));
                     break;

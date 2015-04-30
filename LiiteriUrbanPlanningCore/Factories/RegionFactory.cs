@@ -18,6 +18,11 @@ namespace LiiteriUrbanPlanningCore.Factories
             r.Name = rdr["name"].ToString();
             r.RegionType = rdr["regionType"].ToString();
 
+            object value = this.GetValueOrNull(rdr, "OrderNumber");
+            if (value != null) {
+                r.OrderNumber = (int) Convert.ToInt32(value);
+            }
+
             return r;
         }
     }
