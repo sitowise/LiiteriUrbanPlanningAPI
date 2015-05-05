@@ -132,7 +132,10 @@ SELECT
     VMKM.JarjNro AS OrderNumber,
     MT.Kaavamerkinta AS Description,
     SUM(MT.Pinala) AS AreaSize,
-    CAST(ROUND((100 / @TotalAreaSizeMTSummed * SUM(MT.Pinala)), 1) AS DECIMAL(4, 1)) AS AreaPercent,
+    CAST((CASE
+        WHEN @TotalAreaSizeMTSummed IS NOT NULL AND @TotalAreaSizeMTSummed > 0
+        THEN ROUND((100 / @TotalAreaSizeMTSummed * SUM(MT.Pinala)), 1)
+        ELSE NULL END) AS DECIMAL(4, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
     SUM(MT.PinalaMuutos) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
