@@ -113,7 +113,7 @@ SELECT
     CAST((CASE
         WHEN @TotalAreaSize > 0
         THEN ROUND((S.area / @TotalAreaSize * 100.0), 1)
-        ELSE 0 END) AS DECIMAL(4,1)) AS AreaPercent,
+        ELSE 0 END) AS DECIMAL(6, 1)) AS AreaPercent,
     S.floorspace AS FloorSpace,
     CAST(S.effectiveness AS DECIMAL(20,2)) AS Efficiency,
     CAST(S.areachange AS DECIMAL(20, 4)) AS AreaChange,
@@ -186,7 +186,7 @@ SELECT
     CAST((CASE
         WHEN MMS.AreaSize IS NOT NULL AND MMS.AreaSize > 0
         THEN ROUND((SUM(AV.Pinala) / MMS.AreaSize * 100.0), 1)
-        ELSE NULL END) AS DECIMAL(5,1)) AS AreaPercent,
+        ELSE NULL END) AS DECIMAL(6, 1)) AS AreaPercent,
     SUM(AV.Kerrosala) AS FloorSpace,
     SUM(AV.Tehokkuus) AS Efficiency,
     SUM(AV.PinalaMuutos) AS AreaChange,

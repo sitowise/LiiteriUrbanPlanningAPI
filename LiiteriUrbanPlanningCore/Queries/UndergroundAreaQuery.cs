@@ -81,7 +81,7 @@ WHERE
 SELECT
     'Yhteensä' AS Description,
     CAST(SUM(MT.Pinala) AS DECIMAL(20,4)) AS AreaSize,
-    CAST(ROUND(@TotalAreaSizeMTPercent, 1) AS DECIMAL(4, 1)) AS AreaPercent,
+    CAST(ROUND(@TotalAreaSizeMTPercent, 1) AS DECIMAL(6, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
     CAST(SUM(MT.PinalaMuutos) AS DECIMAL(20,4)) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
@@ -115,7 +115,7 @@ SELECT
     0 AS OrderNumber,
     'Yhteensä' AS Description,
     SUM(MT.Pinala) AS AreaSize,
-    CAST(ROUND(@TotalAreaSizeMTPercent, 1) AS DECIMAL(4, 1)) AS AreaPercent,
+    CAST(ROUND(@TotalAreaSizeMTPercent, 1) AS DECIMAL(6, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
     SUM(MT.PinalaMuutos) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
@@ -135,7 +135,7 @@ SELECT
     CAST((CASE
         WHEN @TotalAreaSizeMTSummed IS NOT NULL AND @TotalAreaSizeMTSummed > 0
         THEN ROUND((100 / @TotalAreaSizeMTSummed * SUM(MT.Pinala)), 1)
-        ELSE NULL END) AS DECIMAL(4, 1)) AS AreaPercent,
+        ELSE NULL END) AS DECIMAL(6, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
     SUM(MT.PinalaMuutos) AS AreaChange,
     SUM(MT.KerrosalaMuutos) AS FloorSpaceChange
