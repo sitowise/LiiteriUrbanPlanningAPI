@@ -85,7 +85,7 @@ SELECT
     NULL AS MainMarkId,
     'Yhteensä' AS Description,
     CAST(ROUND(sum(AV.Pinala),4) AS DECIMAL(20,4)) AS AreaSize,
-    CAST(ROUND(100 / A.Pinala * SUM(AV.Pinala), 1) AS DECIMAL(20, 1)) AS AreaPercent,
+    CAST(ROUND(100 / SUM(A.Pinala) * SUM(AV.Pinala), 1) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
     CAST((case
         when sum(AV.Pinala)=0 then null
@@ -100,8 +100,6 @@ FROM
     INNER JOIN [{0}]..[Aluevaraus] AV ON
         A.Asemakaava_Id = AV.Asemakaava_Id  
 {1}
-GROUP BY
-    A.Pinala
 
 UNION ALL
 
@@ -158,7 +156,7 @@ SELECT
     NULL AS MainMarkId,
     'Yhteensä' AS Description,
     ROUND(sum(AV.Pinala),4) AS AreaSize,
-    CAST(ROUND(100 / A.Pinala * sum(AV.Pinala), 1) AS DECIMAL(20, 1)) AS AreaPercent,
+    CAST(ROUND(100 / SUM(A.Pinala) * sum(AV.Pinala), 1) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
     (case
         when sum(AV.Pinala)=0 then null
@@ -173,8 +171,6 @@ FROM
     INNER JOIN [{0}]..[Aluevaraus] AV ON
         A.Asemakaava_Id = AV.Asemakaava_Id  
 {1}
-GROUP BY
-    A.Pinala
 
 UNION ALL
 
