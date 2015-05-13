@@ -624,7 +624,8 @@ CASE
             sb.Append(string.Format(
                 "FROM [{0}]..[MaanalaisetTilat] M ",
                 ConfigurationManager.AppSettings["DbKatse"]));
-            sb.Append("WHERE M.Asemakaava_Id = A.Asemakaava_Id) M ");
+            sb.Append("WHERE M.Asemakaava_Id = A.Asemakaava_Id AND " +
+                "M.Pinala IS NOT NULL AND M.Pinala > 0) M ");
             if (this.areaWhereList.Count > 0) {
                 this.whereList.Add(String.Format("({0})",
                     string.Join(" OR ", this.areaWhereList)));
