@@ -325,8 +325,8 @@ A.Asemakaava_Id IN (
                 var orList = new List<string>();
 
                 orList.Add("CONVERT(VARCHAR(MAX), A.Tyvi_id) = @KeywordSearchIs");
-                orList.Add("A.KuntaKaavaTunnus = @KeywordSearchIs");
-                orList.Add("A.GenKaavaTunnus = @KeywordSearchIs");
+                orList.Add("A.KuntaKaavaTunnus LIKE @KeywordSearchLike");
+                orList.Add("A.GenKaavaTunnus LIKE @KeywordSearchLike");
 
                 orList.Add("A.Nimi LIKE @KeywordSearchLike");
                 orList.Add("A.NimiRUO LIKE @KeywordSearchLike");
