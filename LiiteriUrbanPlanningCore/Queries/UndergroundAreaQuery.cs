@@ -72,7 +72,13 @@ namespace LiiteriUrbanPlanningCore.Queries
             string queryStringMain = @"
 DECLARE @TotalAreaSizeMTPercent FLOAT
 SELECT
-    @TotalAreaSizeMTPercent = 100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
+    @TotalAreaSizeMTPercent =
+        (CASE
+            WHEN SUM(A.Pinala) = 0 THEN NULL
+            WHEN SUM(A.Pinala) IS NULL THEN NULL
+            WHEN SUM(A.Pinala) > 0 THEN
+                100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
+        END)
 FROM
     [{0}]..[Asemakaava] A
 WHERE
@@ -105,7 +111,13 @@ WHERE
 
 DECLARE @TotalAreaSizeMTPercent FLOAT
 SELECT
-    @TotalAreaSizeMTPercent = 100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
+    @TotalAreaSizeMTPercent =
+        (CASE
+            WHEN SUM(A.Pinala) = 0 THEN NULL
+            WHEN SUM(A.Pinala) IS NULL THEN NULL
+            WHEN SUM(A.Pinala) > 0 THEN
+                100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
+        END)
 FROM
     [{0}]..[Asemakaava] A
 WHERE

@@ -85,7 +85,12 @@ SELECT
     NULL AS MainMarkId,
     'Yhteensä' AS Description,
     CAST(ROUND(sum(AV.Pinala),4) AS DECIMAL(20,4)) AS AreaSize,
-    CAST(ROUND(100 / SUM(A.Pinala) * SUM(AV.Pinala), 1) AS DECIMAL(20, 1)) AS AreaPercent,
+    CAST((CASE
+            WHEN SUM(A.Pinala) = 0 THEN NULL
+            WHEN SUM(A.Pinala) IS NULL THEN NULL
+            WHEN SUM(A.Pinala) > 0 THEN
+                ROUND(100 / SUM(A.Pinala) * SUM(AV.Pinala), 1)
+    END) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
     CAST((case
         when sum(AV.Pinala)=0 then null
@@ -156,7 +161,12 @@ SELECT
     NULL AS MainMarkId,
     'Yhteensä' AS Description,
     ROUND(sum(AV.Pinala),4) AS AreaSize,
-    CAST(ROUND(100 / SUM(A.Pinala) * sum(AV.Pinala), 1) AS DECIMAL(20, 1)) AS AreaPercent,
+    CAST((CASE
+            WHEN SUM(A.Pinala) = 0 THEN NULL
+            WHEN SUM(A.Pinala) IS NULL THEN NULL
+            WHEN SUM(A.Pinala) > 0 THEN
+                ROUND(100 / SUM(A.Pinala) * SUM(AV.Pinala), 1)
+    END) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
     (case
         when sum(AV.Pinala)=0 then null
