@@ -80,24 +80,32 @@ FROM
         A.Asemakaava_Id = AV.Asemakaava_Id  
 {1}
 
+DECLARE @PlanAreaSize FLOAT
+
+SELECT
+    @PlanAreaSize = SUM(A.Pinala)
+FROM
+    [LiiteriKatse]..[Asemakaava] A
+{1}
+
 SELECT
     1 AS prio,
     NULL AS MainMarkId,
     'Yhteensä' AS Description,
     CAST(ROUND(sum(AV.Pinala),4) AS DECIMAL(20,4)) AS AreaSize,
     CAST((CASE
-            WHEN SUM(A.Pinala) = 0 THEN NULL
-            WHEN SUM(A.Pinala) IS NULL THEN NULL
-            WHEN SUM(A.Pinala) > 0 THEN
-                ROUND(100 / SUM(A.Pinala) * SUM(AV.Pinala), 1)
-    END) AS DECIMAL(20, 1)) AS AreaPercent,
+            WHEN @PlanAreaSize = 0 THEN NULL
+            WHEN @PlanAreaSize IS NULL THEN NULL
+            WHEN @PlanAreaSize > 0 THEN
+                ROUND(100 / @PlanAreaSize * SUM(AV.Pinala), 1)
+        END) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
     CAST((case
         when sum(AV.Pinala)=0 then null
         when sum(AV.Pinala) is null then null
         when sum(AV.Pinala)<>0 then
             ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
-    end) AS DECIMAL(20,2)) AS Efficiency,
+        end) AS DECIMAL(20,2)) AS Efficiency,
     CAST(ROUND(sum(AV.PinalaMuutos),4) AS DECIMAL(20,4)) AS AreaChange,
     ROUND(sum(AV.KerrosalaMuutos),0) AS FloorSpaceChange 
 FROM
@@ -156,30 +164,38 @@ ORDER BY
 ";
 
             string queryStringSub = @"
+DECLARE @PlanAreaSize FLOAT
+
+SELECT
+    @PlanAreaSize = SUM(A.Pinala)
+FROM
+    [LiiteriKatse]..[Asemakaava] A
+{1}
+
 SELECT
     1 AS prio,
     NULL AS MainMarkId,
     'Yhteensä' AS Description,
     ROUND(sum(AV.Pinala),4) AS AreaSize,
     CAST((CASE
-            WHEN SUM(A.Pinala) = 0 THEN NULL
-            WHEN SUM(A.Pinala) IS NULL THEN NULL
-            WHEN SUM(A.Pinala) > 0 THEN
-                ROUND(100 / SUM(A.Pinala) * SUM(AV.Pinala), 1)
-    END) AS DECIMAL(20, 1)) AS AreaPercent,
+            WHEN @PlanAreaSize = 0 THEN NULL
+            WHEN @PlanAreaSize IS NULL THEN NULL
+            WHEN @PlanAreaSize > 0 THEN
+                ROUND(100 / @PlanAreaSize * SUM(AV.Pinala), 1)
+        END) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
     (case
         when sum(AV.Pinala)=0 then null
         when sum(AV.Pinala) is null then null
         when sum(AV.Pinala)<>0 then
             ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
-    end) AS Efficiency,
+        end) AS Efficiency,
     ROUND(sum(AV.PinalaMuutos),4) AS AreaChange,
     ROUND(sum(AV.KerrosalaMuutos),0) AS FloorSpaceChange 
 FROM
     [{0}]..[Asemakaava] A
     INNER JOIN [{0}]..[Aluevaraus] AV ON
-        A.Asemakaava_Id = AV.Asemakaava_Id  
+        A.Asemakaava_Id = AV.Asemakaava_Id
 {1}
 
 UNION ALL
@@ -214,6 +230,7 @@ FROM
             AV.PaaLuokka_Id
         ) MMS ON MMS.MainMarkId = AV.PaaLuokka_Id
 {1}
+AND AV.Kaavamerkinta IS NOT NULL
 
 GROUP BY
     AV.PaaLuokka_Id,
@@ -231,7 +248,6 @@ ORDER BY
                     break;
                 case (int) QueryTypes.Sub:
                     queryString = queryStringSub;
-                    this.whereList.Add("AV.Kaavamerkinta IS NOT NULL");
                     break;
                 default:
                     throw new ArgumentException("QueryType not specified!");
