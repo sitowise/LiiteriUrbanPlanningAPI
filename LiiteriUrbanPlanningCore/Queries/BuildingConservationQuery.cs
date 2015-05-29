@@ -119,7 +119,7 @@ FROM
     FROM
         [{0}]..RakennusSuojTyyppi
     WHERE
-        RakennusSuojTyyppi_Id in(1,2)) AS RST
+        RakennusSuojTyyppi_Id IN (1,2,3)) AS RST
     INNER JOIN (
         SELECT
             RS.RakennusSuojTyyppi_Id,
