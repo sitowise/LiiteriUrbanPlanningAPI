@@ -107,7 +107,7 @@ UNION ALL
 
 SELECT
     2 AS prio,
-    NULL AS ConservationTypeId,
+    RSSUM.RakennusSuojTyyppi_Id AS ConservationTypeId,
     RST.RakennusSuojTyyppi AS ConservationTypeName,
     RSSUM.buildingcount AS BuildingCount,
     RSSUM.floorspace AS FloorSpace,
