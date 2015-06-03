@@ -220,7 +220,7 @@ LEFT OUTER JOIN [{2}]..[Kunta] K1 ON
             string queryStringConsults = @"
 SELECT
     DISTINCT
-    NULL AS ConsultAuthorized,
+    COALESCE(KV.authorise, 0) AS ConsultAuthorized,
     NULL AS MunicipalityId,
     NULL AS MunicipalityName,
     H2.Nimi AS OrganizationName,
@@ -241,6 +241,15 @@ FROM
         H2.KayttajaTunnus = KK.KayttajaTunnus
     LEFT OUTER JOIN [{2}]..[Kunta] K2 ON
         K2.Kunta_Id = KK.H_Kunta_Id
+    LEFT OUTER JOIN (
+        SELECT
+            DISTINCT
+            KayttajaTunnus,
+            1 as authorise
+        FROM
+            [{1}]..[KuntaKonsultti]
+        ) KV ON
+            KV.KayttajaTunnus = H2.KayttajaTunnus
 {0}
 ";
             string whereStringConsults = "";
