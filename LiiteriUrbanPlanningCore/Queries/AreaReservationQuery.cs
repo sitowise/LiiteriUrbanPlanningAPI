@@ -85,7 +85,7 @@ DECLARE @PlanAreaSize FLOAT
 SELECT
     @PlanAreaSize = SUM(A.Pinala)
 FROM
-    [LiiteriKatse]..[Asemakaava] A
+    [{0}]..[Asemakaava] A
 {1}
 
 SELECT
@@ -169,7 +169,7 @@ DECLARE @PlanAreaSize FLOAT
 SELECT
     @PlanAreaSize = SUM(A.Pinala)
 FROM
-    [LiiteriKatse]..[Asemakaava] A
+    [{0}]..[Asemakaava] A
 {1}
 
 SELECT
