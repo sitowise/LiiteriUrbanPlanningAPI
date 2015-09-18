@@ -124,7 +124,7 @@ SELECT
     CAST((CASE
         WHEN @TotalAreaSize > 0
         THEN ROUND((S.area / @TotalAreaSize * 100.0), 1)
-        ELSE 0 END) AS DECIMAL(6, 1)) AS AreaPercent,
+        ELSE NULL END) AS DECIMAL(6, 1)) AS AreaPercent,
     S.floorspace AS FloorSpace,
     CAST(S.effectiveness AS DECIMAL(20,2)) AS Efficiency,
     CAST(S.areachange AS DECIMAL(20, 4)) AS AreaChange,
