@@ -96,15 +96,15 @@ SELECT
     CAST((CASE
             WHEN @PlanAreaSize = 0 THEN NULL
             WHEN @PlanAreaSize IS NULL THEN NULL
-            WHEN @PlanAreaSize > 0 THEN
+            WHEN @PlanAreaSize <> 0 THEN
                 ROUND(100 / @PlanAreaSize * SUM(AV.Pinala), 1)
         END) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
     CAST((case
-        when sum(AV.Pinala)=0 then null
-        when sum(AV.Pinala) is null then null
-        when sum(AV.Pinala)<>0 then
-            ROUND((sum(AV.Kerrosala)/sum(AV.Pinala))/10000,2)
+        WHEN SUM(AV.Pinala) = 0 then NULL
+        WHEN SUM(AV.Pinala) is NULL then NULL
+        WHEN SUM(AV.Pinala) <> 0 then
+            ROUND((SUM(AV.Kerrosala) / SUM(AV.Pinala)) / 10000, 2)
         end) AS DECIMAL(20,2)) AS Efficiency,
     CAST(ROUND(sum(AV.PinalaMuutos),4) AS DECIMAL(20,4)) AS AreaChange,
     ROUND(sum(AV.KerrosalaMuutos),0) AS FloorSpaceChange 
@@ -122,7 +122,7 @@ SELECT
     KPL.NaytonSelite AS Description,
     CAST(S.area AS DECIMAL(20,4)) AS AreaSize,
     CAST((CASE
-        WHEN @TotalAreaSize > 0
+        WHEN (@TotalAreaSize IS NOT NULL AND @TotalAreaSize <> 0)
         THEN ROUND((S.area / @TotalAreaSize * 100.0), 1)
         ELSE NULL END) AS DECIMAL(6, 1)) AS AreaPercent,
     S.floorspace AS FloorSpace,
@@ -180,7 +180,7 @@ SELECT
     CAST((CASE
             WHEN @PlanAreaSize = 0 THEN NULL
             WHEN @PlanAreaSize IS NULL THEN NULL
-            WHEN @PlanAreaSize > 0 THEN
+            WHEN @PlanAreaSize <> 0 THEN
                 ROUND(100 / @PlanAreaSize * SUM(AV.Pinala), 1)
         END) AS DECIMAL(20, 1)) AS AreaPercent,
     ROUND(sum(AV.Kerrosala),0) AS FloorSpace,
@@ -206,7 +206,7 @@ SELECT
     AV.Kaavamerkinta AS Description,
     SUM(AV.Pinala) AS AreaSize,
     CAST((CASE
-        WHEN MMS.AreaSize IS NOT NULL AND MMS.AreaSize > 0
+        WHEN (MMS.AreaSize IS NOT NULL AND MMS.AreaSize <> 0)
         THEN ROUND((SUM(AV.Pinala) / MMS.AreaSize * 100.0), 1)
         ELSE NULL END) AS DECIMAL(6, 1)) AS AreaPercent,
     SUM(AV.Kerrosala) AS FloorSpace,

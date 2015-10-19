@@ -76,7 +76,7 @@ SELECT
         (CASE
             WHEN SUM(A.Pinala) = 0 THEN NULL
             WHEN SUM(A.Pinala) IS NULL THEN NULL
-            WHEN SUM(A.Pinala) > 0 THEN
+            WHEN SUM(A.Pinala) <> 0 THEN
                 100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
         END)
 FROM
@@ -115,7 +115,7 @@ SELECT
         (CASE
             WHEN SUM(A.Pinala) = 0 THEN NULL
             WHEN SUM(A.Pinala) IS NULL THEN NULL
-            WHEN SUM(A.Pinala) > 0 THEN
+            WHEN SUM(A.Pinala) <> 0 THEN
                 100.0 / SUM(A.Pinala) * SUM(A.MaanalainenPinala)
         END)
 FROM
@@ -145,7 +145,7 @@ SELECT
     MT.Kaavamerkinta AS Description,
     SUM(MT.Pinala) AS AreaSize,
     CAST((CASE
-        WHEN @TotalAreaSizeMTSummed IS NOT NULL AND @TotalAreaSizeMTSummed > 0
+        WHEN (@TotalAreaSizeMTSummed IS NOT NULL AND @TotalAreaSizeMTSummed <> 0)
         THEN ROUND((100 / @TotalAreaSizeMTSummed * SUM(MT.Pinala)), 1)
         ELSE NULL END) AS DECIMAL(6, 1)) AS AreaPercent,
     SUM(MT.Kerrosala) AS FloorSpace,
